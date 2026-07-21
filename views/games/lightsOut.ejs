@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,53 +17,62 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      padding: 30px;
+      gap: 10px;
+      padding: 12px 18px;
       background: var(--card-bg, rgba(251, 252, 252, 0.4));
       border: var(--card-border, 1px solid rgba(251, 252, 252, 0.6));
       border-radius: 20px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--glass-shadow);
-      max-width: 520px;
+      max-width: 360px;
       margin: 0 auto;
       text-align: center;
     }
+
     .game-header h1 {
       font-family: var(--font-heading);
       font-weight: 800;
       text-transform: uppercase;
       color: var(--text-primary, #52516E);
+      font-size: 20px;
+      margin: 0;
     }
+
     .game-header p {
       color: rgba(82, 81, 110, 0.7);
-      font-size: 14px;
-      margin-top: 5px;
+      font-size: 11px;
+      margin-top: 2px;
+      margin-bottom: 2px !important;
     }
+
     .timer-badge {
       background: rgba(244, 47, 118, 0.12);
       color: var(--accent-hot-pink, #F42F76);
-      padding: 8px 22px;
+      padding: 4px 14px;
       border-radius: 50px;
       font-family: var(--font-heading);
       font-weight: 800;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       border: 1px solid rgba(244, 47, 118, 0.25);
     }
+
     #game-board {
       width: 100%;
-      padding: 16px;
+      padding: 10px;
       background: rgba(82, 81, 110, 0.08);
       border-radius: 20px;
       border: 1px solid rgba(82, 81, 110, 0.1);
     }
+
     .game-actions {
       display: flex;
       gap: 15px;
       margin-top: 5px;
     }
+
     .game-btn {
       padding: 10px 24px;
       background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
@@ -74,21 +84,23 @@
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .game-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(80, 209, 224, 0.3);
     }
+
     /* Enforce perfectly square buttons on game-board & Butter-Smooth UX */
     #game-board button {
       aspect-ratio: 1 / 1 !important;
       width: 100% !important;
       border: none !important;
-      border-radius: 16px !important;
+      border-radius: 10px !important;
       outline: none !important;
       cursor: pointer;
       transition: background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-                  box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-                  transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
       will-change: transform, background-color, box-shadow;
     }
 
@@ -116,57 +128,70 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content">
-      <%- include('../dashboard/navbar') %>
+      <main class="main-content">
+        <%- include('../dashboard/navbar') %>
 
-      <div style="padding: 24px;">
-        <div class="game-wrapper">
-          <div class="game-header">
-            <h1>Lights Out</h1>
-            <p class="mb-2">Turn off all the lights to win! Clicking a light toggles it and its adjacent neighbors.</p>
-            
-            <!-- Legend explaining Yellow = ON and Dark = OFF -->
-            <div class="d-flex justify-content-center align-items-center gap-2 my-2 flex-wrap">
-              <span class="badge bg-warning text-dark px-3 py-2 fs-6 rounded-pill shadow-sm">🟨 Yellow = ON</span>
-              <span class="badge bg-dark text-white px-3 py-2 fs-6 rounded-pill border border-secondary shadow-sm">⬛ Dark = OFF</span>
+          <div style="padding: 10px 24px;">
+            <div class="game-wrapper">
+              <div class="game-header">
+                <h1>Lights Out</h1>
+                <p class="mb-1">Turn off all the lights to win! Clicking a light toggles it and its adjacent neighbors.
+                </p>
+
+                <!-- Legend explaining Yellow = ON and Dark = OFF -->
+                <div class="d-flex justify-content-center align-items-center gap-3 my-1"
+                  style="font-size: 11px; font-weight: 700;">
+                  <span class="d-flex align-items-center gap-1"><span
+                      style="display:inline-block; width:10px; height:10px; background-color:#FFD23F; border-radius:3px;"></span>
+                    Yellow = ON</span>
+                  <span class="d-flex align-items-center gap-1"><span
+                      style="display:inline-block; width:10px; height:10px; background-color:#202030; border-radius:3px; border:1px solid rgba(255,255,255,0.25);"></span>
+                    Dark = OFF</span>
+                </div>
+              </div>
+
+              <!-- Timer Display & Toggle Option -->
+              <div class="d-flex align-items-center justify-content-between gap-3 w-100 px-1" style="max-width: 260px;">
+                <div class="timer-badge shadow-sm" id="game-timer" title="Time Remaining">
+                  <span style="font-size: 13px;">⏱️</span>
+                  <span id="timer-text" class="fw-bold fs-6">02:00</span>
+                </div>
+
+                <div class="form-check form-switch m-0 d-inline-flex align-items-center gap-2">
+                  <input class="form-check-input" type="checkbox" id="timer-toggle" checked
+                    style="cursor: pointer; width: 34px; height: 17px;">
+                  <label class="form-check-label fw-bold" for="timer-toggle"
+                    style="cursor: pointer; font-size: 11px; color: var(--text-primary);">Timer</label>
+                </div>
+              </div>
+
+              <!-- Dynamic 5x5 Grid Board -->
+              <div id="game-board"></div>
+
+              <!-- Controls -->
+              <div class="game-actions">
+                <button id="reset-btn" class="game-btn">Reset Game</button>
+                <button class="game-btn"
+                  style="background: rgba(82, 81, 110, 0.1); border: 1px solid rgba(82, 81, 110, 0.2); color: var(--text-primary);"
+                  onclick="window.location.href='/'">Back</button>
+              </div>
             </div>
           </div>
-
-          <!-- Timer Display & Toggle Option -->
-          <div class="d-flex flex-column align-items-center gap-2">
-            <div class="timer-badge shadow-sm" id="game-timer" title="Time Remaining">
-              <span style="font-size: 18px;">⏱️</span>
-              <span id="timer-text" class="fw-bold fs-5">02:00</span>
-            </div>
-            
-            <div class="form-check form-switch mt-1 d-inline-flex align-items-center gap-2">
-              <input class="form-check-input" type="checkbox" id="timer-toggle" checked style="cursor: pointer; width: 38px; height: 19px;">
-              <label class="form-check-label fw-bold" for="timer-toggle" style="cursor: pointer; font-size: 13px; color: var(--text-primary);">Enable 2-Min Timer</label>
-            </div>
-          </div>
-
-          <!-- Dynamic 5x5 Grid Board -->
-          <div id="game-board"></div>
-
-          <!-- Controls -->
-          <div class="game-actions">
-            <button id="reset-btn" class="game-btn">Reset Game</button>
-            <button class="game-btn" style="background: rgba(82, 81, 110, 0.1); border: 1px solid rgba(82, 81, 110, 0.2); color: var(--text-primary);" onclick="window.location.href='/'">Back</button>
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
   </div>
 
   <!-- Bootstrap 5 Win Modal -->
-  <div class="modal fade" id="winModal" tabindex="-1" aria-labelledby="winModalLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal fade" id="winModal" tabindex="-1" aria-labelledby="winModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="border-radius: 24px; background: #ffffff; border: none; box-shadow: 0 16px 40px rgba(82, 81, 110, 0.25);">
+      <div class="modal-content"
+        style="border-radius: 24px; background: #ffffff; border: none; box-shadow: 0 16px 40px rgba(82, 81, 110, 0.25);">
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title fw-bold text-success fs-4" id="winModalLabel">🎉 Victory!</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -177,16 +202,19 @@
           <p class="text-muted mb-0">Excellent puzzle solving skills! You've earned <strong>+150 XP</strong>.</p>
         </div>
         <div class="modal-footer border-0 pt-0 justify-content-center">
-          <button type="button" class="btn btn-warning px-4 py-2 fw-bold text-dark rounded-pill shadow-sm" data-bs-dismiss="modal" id="modal-reset-btn">Play Again</button>
+          <button type="button" class="btn btn-warning px-4 py-2 fw-bold text-dark rounded-pill shadow-sm"
+            data-bs-dismiss="modal" id="modal-reset-btn">Play Again</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Bootstrap 5 Game Over Modal -->
-  <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="border-radius: 24px; background: #ffffff; border: none; box-shadow: 0 16px 40px rgba(82, 81, 110, 0.25);">
+      <div class="modal-content"
+        style="border-radius: 24px; background: #ffffff; border: none; box-shadow: 0 16px 40px rgba(82, 81, 110, 0.25);">
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title fw-bold text-danger fs-4" id="gameOverModalLabel">⏰ Time's Up!</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -197,7 +225,8 @@
           <p class="text-muted mb-0">You ran out of time! Try again and clear all lights within 2 minutes.</p>
         </div>
         <div class="modal-footer border-0 pt-0 justify-content-center">
-          <button type="button" class="btn btn-danger px-4 py-2 fw-bold rounded-pill shadow-sm" data-bs-dismiss="modal" id="game-over-reset-btn">Try Again</button>
+          <button type="button" class="btn btn-danger px-4 py-2 fw-bold rounded-pill shadow-sm" data-bs-dismiss="modal"
+            id="game-over-reset-btn">Try Again</button>
         </div>
       </div>
     </div>
@@ -209,4 +238,5 @@
   <script src="/js/lightsOut.js"></script>
   <script src="/js/backgroundFX.js"></script>
 </body>
+
 </html>
