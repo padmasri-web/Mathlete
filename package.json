@@ -1,0 +1,23 @@
+{
+  "name": "mathlete",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/padmasri-web/Mathlete.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/padmasri-web/Mathlete/issues"
+  },
+  "homepage": "https://github.com/padmasri-web/Mathlete#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.8.0"
+  }
+}
