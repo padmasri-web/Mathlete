@@ -1,0 +1,897 @@
+/* Dashboard Layout */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Fixed Left Sidebar */
+.sidebar {
+  width: 260px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.logo-container {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.logo-container img {
+  height: 100%;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.nav-item img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--card-bg-base);
+  box-shadow: var(--glass-shadow);
+  color: var(--accent-royal-blue);
+  transform: translateX(4px);
+}
+
+.nav-item:hover img, .nav-item.active img {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.nav-item.active {
+  border-left: 4px solid var(--accent-royal-blue);
+}
+
+/* Sidebar Profile Preview */
+.profile-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(251, 252, 252, 0.2);
+  border: 1px solid rgba(251, 252, 252, 0.3);
+  transition: all 0.3s ease;
+}
+
+.profile-preview:hover {
+  background: var(--card-bg-base);
+  box-shadow: var(--glass-shadow);
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--accent-royal-blue);
+  color: var(--card-bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  border: 2px solid var(--card-bg-base);
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-username {
+  font-size: 12px;
+  color: rgba(82, 81, 110, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Main Content Area */
+.main-content {
+  margin-left: 260px;
+  flex-grow: 1;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Top Header */
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.friends-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 10px 20px;
+  border-radius: 50px;
+  overflow-x: auto;
+  max-width: 60%;
+}
+
+.friends-list {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.friend-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.friend-item:hover {
+  transform: translateY(-2px);
+}
+
+.friend-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  border: 2px solid var(--card-bg-base);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.friend-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.friend-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg-base);
+}
+
+.friend-status.online {
+  background-color: #2ec4b6;
+}
+
+.friend-status.idle {
+  background-color: #ff9f1c;
+}
+
+.friend-name {
+  display: none; /* Can be shown on hover */
+}
+
+/* Wallet Stats */
+.wallet-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.stat-pill:hover {
+  background: var(--glass-bg-hover);
+  transform: translateY(-2px);
+}
+
+.stat-pill img {
+  width: 18px;
+  height: 18px;
+}
+
+.stat-pill.coins {
+  border-left: 3px solid var(--accent-aqua);
+}
+
+.stat-pill.drops {
+  border-left: 3px solid var(--accent-hot-pink);
+}
+
+.stat-pill.xp {
+  border-left: 3px solid var(--accent-royal-blue);
+}
+
+/* Core Dashboard Layout Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 30px;
+}
+
+.dashboard-left {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.dashboard-right {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* Glassmorphic Cards */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card:hover {
+  background: var(--glass-bg-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px 0 rgba(82, 81, 110, 0.22);
+}
+
+/* Large "Daily Challenges" progress card */
+.daily-challenges-card {
+  grid-column: span 4;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header-with-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(82, 81, 110, 0.7);
+  margin-bottom: 20px;
+}
+
+.countdown-badge {
+  background: rgba(244, 47, 118, 0.15);
+  color: var(--accent-hot-pink);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-track {
+  flex-grow: 1;
+  height: 38px;
+  background: rgba(82, 81, 110, 0.08);
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(82, 81, 110, 0.05);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-royal-blue), var(--accent-aqua));
+  border-radius: 50px;
+  width: 0%; /* Dynamic */
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-label {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--card-bg-base);
+  padding: 2px 10px;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.progress-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(80, 209, 224, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-aqua);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.progress-icon:hover {
+  transform: rotate(15deg) scale(1.1);
+  background: rgba(80, 209, 224, 0.25);
+}
+
+/* Category cards: Math, Memory, Puzzle, Logic */
+.category-card {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.category-icon-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--card-bg-base);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-icon-box {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.category-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.category-stats-count {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Highlighting the active category */
+.category-card.active {
+  background: var(--card-bg-base);
+  border: 2px solid var(--accent-royal-blue);
+  box-shadow: 0 10px 30px rgba(69, 100, 198, 0.15);
+}
+
+/* Game Mode cards (Sprint Duels, Fast & First) */
+.mode-card {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.mode-badge {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #fff;
+  width: fit-content;
+}
+
+.mode-info {
+  margin-top: 20px;
+}
+
+.mode-title {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.mode-desc {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(82, 81, 110, 0.6);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.mode-action {
+  align-self: flex-end;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(82, 81, 110, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.mode-card:hover .mode-action {
+  background: var(--accent-royal-blue);
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* Right Column Section: Daily Quest list */
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-link {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent-royal-blue);
+  text-transform: uppercase;
+}
+
+.quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quest-card {
+  padding: 16px 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quest-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.quest-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quest-play-btn {
+  background: rgba(46, 196, 182, 0.15);
+  color: #2ec4b6;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.quest-play-btn:hover {
+  background: #2ec4b6;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.quest-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(82, 81, 110, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(82, 81, 110, 0.3);
+  font-size: 12px;
+}
+
+.quest-card.completed .quest-check {
+  background: #ff9f1c;
+  color: #fff;
+}
+
+.quest-progress-track {
+  height: 6px;
+  background: rgba(82, 81, 110, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.quest-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.quest-card:nth-child(1) .quest-progress-fill { background: var(--accent-aqua); }
+.quest-card:nth-child(2) .quest-progress-fill { background: var(--accent-royal-blue); }
+.quest-card:nth-child(3) .quest-progress-fill { background: var(--accent-hot-pink); }
+
+/* Download App Promotional Card */
+.promo-card {
+  background: linear-gradient(135deg, rgba(82, 81, 110, 0.9), rgba(69, 100, 198, 0.95));
+  color: #fff;
+  padding: 24px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(69, 100, 198, 0.2);
+}
+
+.promo-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.promo-subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: -8px;
+}
+
+.promo-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.qr-code-box {
+  background: #fff;
+  padding: 8px;
+  border-radius: 12px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.qr-code-box img {
+  width: 100%;
+  height: 100%;
+}
+
+.store-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.store-btn {
+  background: rgba(251, 252, 252, 0.1);
+  border: 1px solid rgba(251, 252, 252, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.store-btn:hover {
+  background: rgba(251, 252, 252, 0.2);
+  transform: translateY(-1px);
+}
+
+.store-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+.store-btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.store-btn-tag {
+  font-size: 8px;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.store-btn-name {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.promo-illustration {
+  position: absolute;
+  bottom: -15px;
+  right: -15px;
+  font-size: 90px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Suggested Friends section at bottom */
+.suggested-friends-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.suggested-friends-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.suggested-friend-card {
+  min-width: 130px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border-radius: 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.suggested-friend-card .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: #fff;
+}
+
+.suggested-friend-card .name {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.add-friend-btn {
+  background: var(--accent-royal-blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+}
+
+.add-friend-btn:hover {
+  background: var(--accent-hot-pink);
+  transform: scale(1.05);
+}
+
+/* Floating Messages Button */
+.floating-messages {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 12.5px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  cursor: pointer;
+  z-index: 100;
+}
+
+.floating-messages:hover {
+  transform: translateY(-2px);
+  background: #222;
+}
+
+/* Header Text styling */
+h1 {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .friends-section {
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 80px;
+    padding: 30px 10px;
+  }
+  .sidebar .logo-container text,
+  .sidebar .nav-item span,
+  .sidebar .profile-details {
+    display: none;
+  }
+  .sidebar .nav-item {
+    justify-content: center;
+    padding: 14px;
+  }
+  .main-content {
+    margin-left: 80px;
+    padding: 20px;
+  }
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .daily-challenges-card {
+    grid-column: span 2;
+  }
+  .mode-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-header {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+  .friends-section {
+    max-width: 100%;
+  }
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .daily-challenges-card {
+    grid-column: span 1;
+  }
+  .category-card {
+    grid-column: span 1;
+  }
+  .mode-card {
+    grid-column: span 1;
+  }
+}

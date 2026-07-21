@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <linearGradient id="wallet-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#50D1E0" />
+      <stop offset="100%" stop-color="#4564C6" />
+    </linearGradient>
+  </defs>
+  <path d="M20 12V8H6a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2h12v4" stroke="url(#wallet-grad)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M4 6v12a2 2 0 0 0 2 2h14v-4" stroke="url(#wallet-grad)" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M18 12h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2v-6z" fill="#F42F76" />
+  <circle cx="20" cy="15" r="1" fill="#FBFCFC" />
+</svg>

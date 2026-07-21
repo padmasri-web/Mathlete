@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matiks - Sudoku Challenge</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .game-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 30px;
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--card-shadow);
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .sudoku-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .sudoku-cell {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 18, 29, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 18px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      border-radius: 4px;
+    }
+    .sudoku-cell.given {
+      color: var(--accent-aqua);
+    }
+    .sudoku-cell:focus {
+      outline: 2px solid var(--accent-royal-blue);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .game-header {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .game-actions {
+      display: flex;
+      gap: 15px;
+    }
+    .game-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .game-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <%- include('../dashboard/leftbar') %>
+
+    <main class="main-content">
+      <%- include('../dashboard/navbar') %>
+
+      <div style="padding: 24px;">
+        <div class="game-wrapper">
+          <div class="game-header">
+            <h1 style="font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; color: #fff;">Sudoku Challenge</h1>
+            <p style="color: var(--text-dim); margin-top: 5px;">Fill the grid so that every row, column, and 3x3 box contains digits 1-9.</p>
+          </div>
+
+          <div class="sudoku-grid" id="sudoku-board">
+            <% 
+              const board = [
+                [5, 3, '', '', 7, '', '', '', ''],
+                [6, '', '', 1, 9, 5, '', '', ''],
+                ['', 9, 8, '', '', '', '', 6, ''],
+                [8, '', '', '', 6, '', '', '', 3],
+                [4, '', '', 8, '', 3, '', '', 1],
+                [7, '', '', '', 2, '', '', '', 6],
+                ['', 6, '', '', '', '', 2, 8, ''],
+                ['', '', '', 4, 1, 9, '', '', 5],
+                ['', '', '', '', 8, '', '', 7, 9]
+              ];
+              for(let r=0; r<9; r++) {
+                for(let c=0; c<9; c++) {
+                  const val = board[r][c];
+                  const given = val !== '';
+            %>
+              <div class="sudoku-cell <%= given ? 'given' : '' %>" contenteditable="<%= !given %>" data-row="<%= r %>" data-col="<%= c %>">
+                <%= val %>
+              </div>
+            <% 
+                }
+              }
+            %>
+          </div>
+
+          <div class="game-actions">
+            <button class="game-btn" onclick="alert('Congratulations! Puzzle solved! +150 Coins!')">Submit</button>
+            <button class="game-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="window.location.href='/'">Back</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/sudoko.js"></script>
+</body>
+</html>

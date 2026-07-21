@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matiks - Logic Challenge</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .game-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 30px;
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--card-shadow);
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .logic-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+      text-align: left;
+      margin: 15px 0;
+      color: #fff;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin: 15px 0;
+    }
+    .option-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-hot-pink);
+    }
+    .option-btn.selected {
+      background: var(--accent-hot-pink);
+      border-color: var(--accent-hot-pink);
+    }
+    .game-actions {
+      display: flex;
+      gap: 15px;
+    }
+    .game-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .game-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <%- include('../dashboard/leftbar') %>
+
+    <main class="main-content">
+      <%- include('../dashboard/navbar') %>
+
+      <div style="padding: 24px;">
+        <div class="game-wrapper">
+          <div class="game-header">
+            <h1 style="font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; color: #fff;">Logic Games</h1>
+            <p style="color: var(--text-dim); margin-top: 5px;">Solve the logic riddle to earn premium XP rewards!</p>
+          </div>
+
+          <div class="logic-box">
+            <h3 style="margin-bottom: 10px; color: #FFD23F;">Riddle of the Day:</h3>
+            <p style="line-height: 1.6;">If a circle is one, a line is two, and a triangle is three, what is the value of a square?</p>
+          </div>
+
+          <div class="options-list" id="riddle-options">
+            <button class="option-btn" onclick="selectOption(this, 1)">A) Three (3)</button>
+            <button class="option-btn" onclick="selectOption(this, 2)">B) Four (4)</button>
+            <button class="option-btn" onclick="selectOption(this, 3)">C) Five (5)</button>
+            <button class="option-btn" onclick="selectOption(this, 4)">D) Six (6)</button>
+          </div>
+
+          <div class="game-actions">
+            <button class="game-btn" onclick="submitAnswer()">Submit</button>
+            <button class="game-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="window.location.href='/'">Back</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let selectedIndex = null;
+    function selectOption(btn, val) {
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedIndex = val;
+    }
+    function submitAnswer() {
+      if (selectedIndex === null) {
+        alert('Please select an option!');
+        return;
+      }
+      if (selectedIndex === 2) {
+        alert('Correct! A square has 4 sides. +200 XP and +100 Coins!');
+      } else {
+        alert('Incorrect. Give it another try!');
+      }
+    }
+  </script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

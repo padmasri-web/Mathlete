@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <linearGradient id="arena-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4564C6" />
+      <stop offset="100%" stop-color="#50D1E0" />
+    </linearGradient>
+  </defs>
+  <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="url(#arena-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9 10L15 16" stroke="url(#arena-grad)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M15 10L9 16" stroke="url(#arena-grad)" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="12" cy="13" r="3" stroke="#F42F76" stroke-width="1.5" fill="none" />
+</svg>

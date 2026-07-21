@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matiks - Premium Gaming Dashboard</title>
+  <meta name="description" content="Play Math, Memory, Puzzle, and Logic duels. Track your stats, complete daily quests, and compete with friends on the Matiks dashboard.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <%- include('dashboard/leftbar') %>
+
+    <main class="main-content">
+      <%- include('dashboard/navbar') %>
+
+      <div class="dashboard-grid">
+        <%- include('dashboard/hero') %>
+        <%- include('dashboard/rightbar') %>
+      </div>
+    </main>
+  </div>
+
+  <!-- Messages widget floating -->
+  <div class="floating-messages" id="messages-widget">
+    <span>💬</span>
+    <span>Messages</span>
+  </div>
+
+  <!-- Main scripts -->
+  <script src="/js/main.js"></script>
+</body>
+</html>

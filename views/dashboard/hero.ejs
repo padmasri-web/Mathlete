@@ -1,0 +1,110 @@
+<div class="dashboard-left">
+
+    <div class="bento-grid" id="main-bento-grid">
+
+        <!-- Large "Daily Challenges" Progress Card -->
+        <div class="card daily-challenges-card" id="card-daily-challenges">
+            <div class="card-header-with-badge">
+                <h2
+                    style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; text-transform: uppercase;">
+                    Daily Challenges</h2>
+                <div class="countdown-badge" id="challenge-timer" title="Time remaining today">
+                    <span>⏱️</span>
+                    <span id="timer-text">00:38</span>
+                </div>
+            </div>
+            <p class="card-subtitle">Complete to earn rewards</p>
+
+            <div class="progress-section">
+                <div class="progress-track">
+                    <div class="progress-fill" id="daily-challenges-progress-fill"></div>
+                    <div class="progress-label" id="daily-challenges-progress-label">0/6</div>
+                </div>
+                <div class="progress-icon" id="claim-rewards-btn" title="Claim Rewards">
+                    🏆
+                </div>
+            </div>
+        </div>
+
+        <!-- Four category cards (Math, Memory, Puzzle, Logic) -->
+        <!-- Math Category -->
+        <div class="card category-card active" id="category-math" data-category="Math">
+            <div class="category-icon-box" style="background-color: #FFD23F;">🧮</div>
+            <span class="category-name">Lights Out</span>
+            <span class="category-stats-count" id="count-math">1003</span>
+        </div>
+
+        <!-- Memory Category -->
+        <div class="card category-card" id="category-memory" data-category="Memory">
+            <div class="category-icon-box" style="background-color: var(--accent-royal-blue);">🧠</div>
+            <span class="category-name">Memory Match</span>
+            <span class="category-stats-count" id="count-memory">840</span>
+        </div>
+
+        <!-- Puzzle Category -->
+        <div class="card category-card" id="category-puzzle" data-category="Puzzle">
+            <div class="category-icon-box" style="background-color: var(--accent-aqua);">🧩</div>
+            <span class="category-name">Sudoku</span>
+            <span class="category-stats-count" id="count-puzzle">512</span>
+        </div>
+
+        <!-- Logic Category -->
+        <div class="card category-card" id="category-logic" data-category="Logic">
+            <div class="category-icon-box" style="background-color: var(--accent-hot-pink);">🔮</div>
+            <span class="category-name">Snake Game</span>
+            <span class="category-stats-count" id="count-logic">620</span>
+        </div>
+
+        <!-- Game Modes Cards (Sprint Duels, Fast & First) -->
+        <div class="card mode-card" id="mode-sprint-duels" style="cursor: pointer;"
+            onclick="window.location.href='/games/crossmath'">
+            <div class="mode-badge" style="background-color: var(--accent-hot-pink);">Math</div>
+            <div class="mode-info">
+                <h3 class="mode-title">Sprint Duels</h3>
+                <p class="mode-desc">Race to solve the most in 1 minute</p>
+            </div>
+            <div class="mode-action">
+                ➔
+            </div>
+        </div>
+
+        <div class="card mode-card" id="mode-fast-first" style="cursor: pointer;"
+            onclick="window.location.href='/games/sudoku'">
+            <div class="mode-badge" style="background-color: var(--accent-royal-blue);">Math</div>
+            <div class="mode-info">
+                <h3 class="mode-title">Fast & First</h3>
+                <p class="mode-desc">Be the first to answer each question</p>
+            </div>
+            <div class="mode-action">
+                ➔
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Suggested Friends section -->
+    <div class="suggested-friends-section" id="suggested-friends-wrapper">
+        <div class="section-title-row">
+            <h3 class="section-title">Suggested Friends</h3>
+            <a href="#" class="section-link">View All</a>
+        </div>
+        <div class="suggested-friends-list" id="suggested-friends-list">
+            <div class="suggested-friend-card">
+                <div class="avatar" style="background-color: var(--accent-royal-blue);">JD</div>
+                <span class="name">John Doe</span>
+                <button class="add-friend-btn">Add</button>
+            </div>
+            <div class="suggested-friend-card">
+                <div class="avatar" style="background-color: var(--accent-hot-pink);">AS</div>
+                <span class="name">Alice Smith</span>
+                <button class="add-friend-btn">Add</button>
+            </div>
+            <div class="suggested-friend-card">
+                <div class="avatar" style="background-color: var(--accent-aqua);">BK</div>
+                <span class="name">Bob K.</span>
+                <button class="add-friend-btn">Add</button>
+            </div>
+        </div>
+    </div>
+
+</div>

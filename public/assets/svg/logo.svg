@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 50" fill="none">
+  <defs>
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4564C6" />
+      <stop offset="100%" stop-color="#F42F76" />
+    </linearGradient>
+  </defs>
+  <!-- Modern Geometric Infinity Path -->
+  <path d="M 25 15 C 33 15, 37 35, 45 35 C 53 35, 57 15, 45 15 C 37 15, 33 35, 25 35 C 17 35, 13 15, 25 15 Z" stroke="url(#logo-grad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="25" cy="25" r="2.5" fill="#50D1E0" />
+  <circle cx="45" cy="25" r="2.5" fill="#F58DB4" />
+  <text x="65" y="32" font-family="'Outfit', sans-serif" font-size="22" font-weight="900" fill="#52516E" letter-spacing="1.5">MATIKS</text>
+</svg>
