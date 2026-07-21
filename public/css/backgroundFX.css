@@ -1,0 +1,69 @@
+/* Background FX Container (Strictly behind content cards & board) */
+#bg-stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Content Stacking Context Enforcers */
+.dashboard-container,
+.main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.game-wrapper {
+  position: relative;
+  z-index: 5;
+}
+
+.sidebar {
+  z-index: 100 !important;
+}
+
+/* Hardware-Accelerated Floating Star Outline Object */
+.star-outline {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: floatDrift var(--duration, 10s) infinite ease-in-out var(--delay, 0s);
+}
+
+.star-outline svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.9;
+  /* Hardware accelerated subtle glow without thread-blocking filter repaints */
+  box-shadow: 0 0 10px rgba(255, 210, 63, 0.4);
+  border-radius: 50%;
+}
+
+/* Hardware Accelerated Keyframes for Floating, Drifting, Scaling and Fade In/Out */
+@keyframes floatDrift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.6);
+  }
+  20% {
+    opacity: var(--max-opacity, 0.85);
+  }
+  50% {
+    transform: translate3d(var(--drift-x, 40px), var(--drift-y, -80px), 0) rotate(var(--rotate-mid, 90deg)) scale(1.15);
+    opacity: var(--max-opacity, 0.95);
+  }
+  80% {
+    opacity: var(--max-opacity, 0.75);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--end-x, 80px), var(--end-y, -160px), 0) rotate(var(--rotate-end, 180deg)) scale(0.6);
+  }
+}
