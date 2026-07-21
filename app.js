@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const challengeRoutes = require('./routes/challengeRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 
 // Import models for seeding
 const User = require('./models/User');
@@ -98,9 +99,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/user', userRoutes);
 app.use('/api/challenges', challengeRoutes);
 
+// Register Game Routes
+app.use('/', gameRoutes);
+
 // View Page Routes
 app.get('/', (req, res) => {
   res.render('index');
+});
+
+app.get('/games/lightsout', (req, res) => {
+  res.render('games/lightsOut');
 });
 
 app.get('/games/sudoku', (req, res) => {
