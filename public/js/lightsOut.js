@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Grid container layout styling
     gameBoard.style.display = 'grid';
     gameBoard.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
-    gameBoard.style.gap = '10px';
-    gameBoard.style.maxWidth = '400px';
+    gameBoard.style.gap = '6px';
+    gameBoard.style.maxWidth = '260px';
     gameBoard.style.margin = '0 auto';
 
     for (let row = 0; row < GRID_SIZE; row++) {

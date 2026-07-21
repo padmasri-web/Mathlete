@@ -65,14 +65,16 @@
   transition: all 0.3s ease;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover,
+.nav-item.active {
   background: var(--card-bg-base);
   box-shadow: var(--glass-shadow);
   color: var(--accent-royal-blue);
   transform: translateX(4px);
 }
 
-.nav-item:hover img, .nav-item.active img {
+.nav-item:hover img,
+.nav-item.active img {
   opacity: 1;
   transform: scale(1.1);
 }
@@ -173,6 +175,34 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 10px 20px;
+  border-radius: 50px;
+  overflow-x: auto;
+  max-width: 60%;
+}
+
+.game-timer-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border-left: 3px solid var(--accent-hot-pink);
+  color: var(--text-main);
 }
 
 .friend-item {
@@ -201,7 +231,7 @@
   font-size: 14px;
   color: #fff;
   border: 2px solid var(--card-bg-base);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .friend-avatar img {
@@ -230,13 +260,15 @@
 }
 
 .friend-name {
-  display: none; /* Can be shown on hover */
+  display: none;
+  /* Can be shown on hover */
 }
 
 /* Wallet Stats */
 .wallet-stats {
   display: flex;
   gap: 12px;
+
 }
 
 .stat-pill {
@@ -376,7 +408,8 @@
   height: 100%;
   background: linear-gradient(90deg, var(--accent-royal-blue), var(--accent-aqua));
   border-radius: 50px;
-  width: 0%; /* Dynamic */
+  width: 0%;
+  /* Dynamic */
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -392,7 +425,7 @@
   background: var(--card-bg-base);
   padding: 2px 10px;
   border-radius: 50px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .progress-icon {
@@ -438,7 +471,7 @@
   font-size: 22px;
   font-weight: bold;
   color: var(--card-bg-base);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
 }
 
@@ -633,9 +666,17 @@
   transition: width 0.5s ease;
 }
 
-.quest-card:nth-child(1) .quest-progress-fill { background: var(--accent-aqua); }
-.quest-card:nth-child(2) .quest-progress-fill { background: var(--accent-royal-blue); }
-.quest-card:nth-child(3) .quest-progress-fill { background: var(--accent-hot-pink); }
+.quest-card:nth-child(1) .quest-progress-fill {
+  background: var(--accent-aqua);
+}
+
+.quest-card:nth-child(2) .quest-progress-fill {
+  background: var(--accent-royal-blue);
+}
+
+.quest-card:nth-child(3) .quest-progress-fill {
+  background: var(--accent-hot-pink);
+}
 
 /* Download App Promotional Card */
 .promo-card {
@@ -681,7 +722,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .qr-code-box img {
@@ -817,7 +858,7 @@
   gap: 8px;
   font-weight: 700;
   font-size: 12.5px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   z-index: 100;
 }
@@ -840,6 +881,7 @@ h1 {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+
   .friends-section {
     max-width: 50%;
   }
@@ -850,25 +892,31 @@ h1 {
     width: 80px;
     padding: 30px 10px;
   }
+
   .sidebar .logo-container text,
   .sidebar .nav-item span,
   .sidebar .profile-details {
     display: none;
   }
+
   .sidebar .nav-item {
     justify-content: center;
     padding: 14px;
   }
+
   .main-content {
     margin-left: 80px;
     padding: 20px;
   }
+
   .bento-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .daily-challenges-card {
     grid-column: span 2;
   }
+
   .mode-card {
     grid-column: span 2;
   }
@@ -879,18 +927,23 @@ h1 {
     flex-direction: column-reverse;
     align-items: flex-start;
   }
+
   .friends-section {
     max-width: 100%;
   }
+
   .bento-grid {
     grid-template-columns: 1fr;
   }
+
   .daily-challenges-card {
     grid-column: span 1;
   }
+
   .category-card {
     grid-column: span 1;
   }
+
   .mode-card {
     grid-column: span 1;
   }

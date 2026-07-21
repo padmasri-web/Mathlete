@@ -7,15 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const userAvatarInitial = document.getElementById('user-avatar-initial');
   const userProfileName = document.getElementById('user-profile-name');
   const userProfileUsername = document.getElementById('user-profile-username');
-  
+
   const timerText = document.getElementById('timer-text');
   const dailyProgressFill = document.getElementById('daily-challenges-progress-fill');
   const dailyProgressLabel = document.getElementById('daily-challenges-progress-label');
-  
+
   const categoryCards = document.querySelectorAll('.category-card');
   const questsRenderList = document.getElementById('quests-render-list');
   const claimRewardsBtn = document.getElementById('claim-rewards-btn');
-  
+
   // Game Mode Card Badges
   const modeSprintBadge = document.querySelector('#mode-sprint-duels .mode-badge');
   const modeFastBadge = document.querySelector('#mode-fast-first .mode-badge');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // 1. Fetch User profile
       const userRes = await fetch('/api/user/profile');
       const user = await userRes.json();
-      
+
       // Update local values
       currentCoins = user.coins;
       currentDrops = user.drops;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update Header Stats
       animateCounter(coinsCount, currentCoins);
       animateCounter(dropsCount, currentDrops);
-      xpCount.textContent = `${currentXp} XP`;
+      if (xpCount) xpCount.textContent = `${currentXp} XP`;
 
       // Update profile preview
       userProfileName.textContent = user.name;
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // 2. Fetch Challenges summary
       const chalRes = await fetch('/api/challenges/summary');
       const data = await chalRes.json();
-      
+
       // Update Daily progress
       challengesCompleted = data.dailyProgress.completed;
       updateDailyProgressHTML();
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
           element.textContent = cat.statsCount;
         }
       });
-      
+
     } catch (error) {
       console.warn("Failed to load dashboard data from backend APIs. Running local mock engine.", error);
       // Fallback local engine runs automatically if fetch fails
@@ -98,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function runLocalMockEngine() {
     animateCounter(coinsCount, currentCoins);
     animateCounter(dropsCount, currentDrops);
-    xpCount.textContent = `${currentXp} XP`;
-    
+    if (xpCount) xpCount.textContent = `${currentXp} XP`;
+
     // Setup initial mock friends list
     const mockFriends = [
       { name: 'YOU', avatar: 'J', status: 'online', color: '#4564C6' },
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const avatar = document.createElement('div');
       avatar.className = 'friend-avatar';
-      
+
       if (friend.avatar) {
         // Initials or image
         if (friend.avatar.length === 1) {
@@ -162,14 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render Quests list
   function renderQuests(quests) {
     questsRenderList.innerHTML = '';
-    
+
     // Sort quests so active are first, completed last
-    const sortedQuests = [...quests].sort((a,b) => a.completed - b.completed);
+    const sortedQuests = [...quests].sort((a, b) => a.completed - b.completed);
 
     sortedQuests.forEach((quest, idx) => {
       const card = document.createElement('div');
       card.className = `card quest-card ${quest.completed ? 'completed' : ''}`;
-      
+
       const percent = Math.min((quest.currentProgress / quest.targetProgress) * 100, 100);
 
       // Quest header
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Progress bar
       const progressTrack = document.createElement('div');
       progressTrack.className = 'quest-progress-track';
-      
+
       const progressFill = document.createElement('div');
       progressFill.className = 'quest-progress-fill';
       progressFill.style.width = '0%'; // For slide-in animation
@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       currentCoins += coinReward;
       currentXp += xpReward;
-      
+
       // Update UI counts
       animateCounter(coinsCount, currentCoins);
-      xpCount.textContent = `${currentXp} XP`;
-      
+      if (xpCount) xpCount.textContent = `${currentXp} XP`;
+
       // Update challenges progress
       if (challengesCompleted < totalChallenges) {
         challengesCompleted++;
@@ -244,11 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Play click rewards effect (small scaling)
-      coinsCount.parentElement.style.transform = 'scale(1.1)';
-      xpCount.parentElement.style.transform = 'scale(1.1)';
+      if (coinsCount) coinsCount.parentElement.style.transform = 'scale(1.1)';
+      if (xpCount) xpCount.parentElement.style.transform = 'scale(1.1)';
       setTimeout(() => {
-        coinsCount.parentElement.style.transform = 'none';
-        xpCount.parentElement.style.transform = 'none';
+        if (coinsCount) coinsCount.parentElement.style.transform = 'none';
+        if (xpCount) xpCount.parentElement.style.transform = 'none';
       }, 200);
 
       // Try updating server backend
@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Convert quest to completed state
       quest.completed = true;
       quest.currentProgress = quest.targetProgress;
-      
+
       // Re-render
       loadDashboardData();
     }, 800);
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('active');
 
       const selectedCategory = card.getAttribute('data-category');
-      
+
       // Dynamic shift of Game Modes to selected category
       modeSprintBadge.textContent = selectedCategory;
       modeFastBadge.textContent = selectedCategory;
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Puzzle: 'var(--accent-aqua)',
         Logic: 'var(--accent-hot-pink)'
       };
-      
+
       const targetColor = colorMap[selectedCategory] || 'var(--accent-royal-blue)';
       modeSprintBadge.style.backgroundColor = targetColor;
       modeFastBadge.style.backgroundColor = targetColor;
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function animateCounter(element, target) {
     const current = parseInt(element.textContent) || 0;
     if (current === target) return;
-    
+
     const range = target - current;
     const duration = 1000;
     let startTime = null;

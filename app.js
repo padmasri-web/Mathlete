@@ -7,6 +7,8 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const challengeRoutes = require('./routes/challengeRoutes');
 const gameRoutes = require('./routes/gameRoutes');
+const memoryMathRoutes = require('./routes/MemoryMathRoutes');
+const snakeGameRoutes = require('./routes/snakeGameRoutes');
 
 // Import models for seeding
 const User = require('./models/User');
@@ -122,6 +124,9 @@ app.get('/games/crossmath', (req, res) => {
 app.get('/games/logic', (req, res) => {
   res.render('games/logicGames');
 });
+
+app.use('/games/memorymath', memoryMathRoutes);
+app.use('/', snakeGameRoutes);
 
 // Fallback to home page
 app.get('/{*splat}', (req, res) => {
