@@ -4,8 +4,12 @@ const passport = require('passport');
 const User = require('../models/Profile');
 const crypto = require('crypto');
 
-// Render Auth / Landing Page
+// Render Auth / Landing Page (Redirects to dashboard if already authenticated)
 router.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return res.redirect('/');
+  }
   res.render('auth/landing');
 });
 
@@ -47,14 +51,16 @@ router.post('/register', async (req, res) => {
       name,
       username,
       password: passwordHash,
-      coins: 0,
+      coins: 500,
       drops: 0,
       xp: 0,
+      rankRating: 0,
+      badgeTier: 'NOVICE',
       ratings: {
-        math: 1000,
-        logic: 1000,
-        memory: 1000,
-        puzzle: 1000
+        math: 0,
+        logic: 0,
+        memory: 0,
+        puzzle: 0
       },
       onlineFriends: [
         { name: 'YOU', avatar: name.charAt(0).toUpperCase(), status: 'online', color: '#4564C6' },
@@ -78,11 +84,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Logout route
+// Logout route (destroys session and clears cookies)
 router.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) { return next(err); }
-    res.redirect('/');
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      res.redirect('/auth');
+    });
   });
 });
 
