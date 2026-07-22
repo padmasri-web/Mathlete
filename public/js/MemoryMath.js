@@ -287,10 +287,27 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.warn("Could not save victory stats to server database:", err);
     }
+
+    // Always log played match details in the database history
+    try {
+      await fetch('/api/user/gamelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: 'Memory',
+          mode: 'Memory Match',
+          playerScore: matchedPairs * 2, // 16 cards total
+          opponentName: 'AI Memory Bot',
+          opponentScore: 12
+        })
+      });
+    } catch (err) {
+      console.warn("Could not save match history gamelog to server:", err);
+    }
   }
 
   // Handle Game Over (Time's Up)
-  function handleGameOver() {
+  async function handleGameOver() {
     isBoardLocked = true;
     playLossSound();
 
@@ -299,6 +316,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (victoryTitle) victoryTitle.textContent = "Time's Up!";
     if (victorySubtitle) victorySubtitle.textContent = "You ran out of time! Try again to earn coins and XP rewards.";
     victoryModal.classList.add('active');
+
+    // Always log played match details in the database history
+    try {
+      await fetch('/api/user/gamelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: 'Memory',
+          mode: 'Memory Match',
+          playerScore: matchedPairs * 2,
+          opponentName: 'AI Memory Bot',
+          opponentScore: 16
+        })
+      });
+    } catch (err) {
+      console.warn("Could not save match history gamelog to server:", err);
+    }
   }
 
   // Counter animation utility

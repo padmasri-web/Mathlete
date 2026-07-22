@@ -3,15 +3,28 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    default: 'Jhalak Yadav'
+    required: true
   },
   username: {
     type: String,
-    default: 'jhalak_yadav'
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    default: ''
   },
   avatarUrl: {
     type: String,
     default: ''
+  },
+  bio: {
+    type: String,
+    default: ''
+  },
+  country: {
+    type: String,
+    default: 'India'
   },
   coins: {
     type: Number,
@@ -24,6 +37,20 @@ const UserSchema = new mongoose.Schema({
   xp: {
     type: Number,
     default: 0
+  },
+  ratings: {
+    math: { type: Number, default: 1000 },
+    logic: { type: Number, default: 1000 },
+    memory: { type: Number, default: 1000 },
+    puzzle: { type: Number, default: 1000 }
+  },
+  collage: {
+    type: String,
+    default: ''
+  },
+  socials: {
+    type: String,
+    default: ''
   },
   onlineFriends: [{
     name: String,
@@ -52,5 +79,11 @@ const UserSchema = new mongoose.Schema({
     }
   }]
 }, { timestamps: true });
+
+UserSchema.methods.validPassword = function(password) {
+  const crypto = require('crypto');
+  const hash = crypto.pbkdf2Sync(password, 'salt', 1000, 64, 'sha512').toString('hex');
+  return this.password === hash;
+};
 
 module.exports = mongoose.model('User', UserSchema);

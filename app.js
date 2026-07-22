@@ -1,7 +1,15 @@
 require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
+const dotenv = require('dotenv');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const connectDB = require('./config/db');
+
+// Load environment variables
+dotenv.config();
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -9,10 +17,11 @@ const challengeRoutes = require('./routes/challengeRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 const memoryMathRoutes = require('./routes/MemoryMathRoutes');
 const snakeGameRoutes = require('./routes/snakeGameRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Import models for seeding
-const User = require('./models/User');
-const Challenge = require('./models/Challenge');
+const User = require('./models/Profile');
+const { Challenge, GameLog } = require('./models/Challenge');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -32,9 +41,13 @@ const seedData = async () => {
 
     const userCount = await User.countDocuments();
     if (userCount === 0) {
+      const crypto = require('crypto');
+      const seedPasswordHash = crypto.pbkdf2Sync('password', 'salt', 1000, 64, 'sha512').toString('hex');
+      
       await User.create({
         name: 'Jhalak Yadav',
         username: 'jhalak_yadav',
+        password: seedPasswordHash,
         coins: 500,
         drops: 0,
         xp: 0,
@@ -76,7 +89,29 @@ const seedData = async () => {
           points: 120
         }
       ]);
-      console.log('Seeded database with challenge categories.');
+    }
+
+    const gameLogCount = await GameLog.countDocuments();
+    if (gameLogCount === 0) {
+      const user = await User.findOne();
+      const challenge = await Challenge.findOne({ mode: "Sprint Duels" });
+      if (user && challenge) {
+        await GameLog.create([
+          {
+            user: user._id,
+            challenge: challenge._id,
+            category: "Math",
+            mode: "Sprint Duels",
+            playerScore: 11,
+            playerRatingChange: 3,
+            opponentName: "adiityabaliyan864",
+            opponentScore: 10,
+            opponentRatingChange: -3,
+            playedAt: new Date("2026-07-14T20:09:00Z")
+          }
+        ]);
+        console.log('Seeded database with default game history logs.');
+      }
     }
   } catch (error) {
     console.error('Seeding database failed:', error.message);
@@ -91,42 +126,142 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Express Session Middleware
+app.use(session({
+  secret: 'mathlete-super-secret-key-9779',
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Initialize Passport and Session support
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport Strategy Configuration
+passport.use(new LocalStrategy({
+  usernameField: 'username',
+  passwordField: 'password'
+}, async (username, password, done) => {
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return done(null, false, { message: 'Incorrect username.' });
+    }
+    if (!user.validPassword(password)) {
+      return done(null, false, { message: 'Incorrect password.' });
+    }
+    return done(null, user);
+  } catch (err) {
+    return done(err);
+  }
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
 
 // Serve frontend static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Register API Routes
+// Register Auth & API Routes
+app.use('/auth', authRoutes);
+
+// Session Locals Middleware
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
 app.use('/api/user', userRoutes);
 app.use('/api/challenges', challengeRoutes);
 
 // Register Game Routes
 app.use('/', gameRoutes);
 
+// Authentication Check Middleware
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/auth');
+};
+
 // View Page Routes
 app.get('/', (req, res) => {
-  res.render('index');
+  if (req.isAuthenticated()) {
+    return res.render('index');
+  }
+  res.redirect('/auth');
 });
 
-app.get('/games/lightsout', (req, res) => {
+app.get('/auth', (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  res.render('auth/landing');
+});
+
+app.get('/profile', ensureAuthenticated, async (req, res) => {
+  try {
+    const user = req.user || await User.findOne();
+    const lastChallenge = await Challenge.findOne({ mode: "Sprint Duels" }) || { title: "Sprint Duels", category: "Math" };
+    
+    let gameLogs = [];
+    if (user) {
+      gameLogs = await GameLog.find({ user: user._id })
+        .populate('challenge')
+        .sort({ playedAt: -1 })
+        .limit(2); // Limit to 2 logs on the profile card
+    }
+    
+    res.render('profile', { user, lastChallenge, gameLogs });
+  } catch (err) {
+    console.warn("Failed to retrieve profile data from MongoDB:", err);
+    res.render('profile', { user: null, lastChallenge: { title: "Sprint Duels", category: "Math" }, gameLogs: [] });
+  }
+});
+
+app.get('/profile/history', ensureAuthenticated, async (req, res) => {
+  try {
+    const user = req.user || await User.findOne();
+    const gameLogs = user ? await GameLog.find({ user: user._id }).populate('challenge').sort({ playedAt: -1 }) : [];
+    res.render('history', { user, gameLogs });
+  } catch (err) {
+    console.warn("Failed to retrieve match history:", err);
+    res.render('history', { user: null, gameLogs: [] });
+  }
+});
+
+app.get('/games/lightsout', ensureAuthenticated, (req, res) => {
   res.render('games/lightsOut');
 });
 
-app.get('/games/sudoku', (req, res) => {
+app.get('/games/sudoku', ensureAuthenticated, (req, res) => {
   res.render('games/sudoku');
 });
 
-app.get('/games/crossmath', (req, res) => {
+app.get('/games/crossmath', ensureAuthenticated, (req, res) => {
   res.render('games/crossMath');
 });
 
-app.get('/games/logic', (req, res) => {
+app.get('/games/logic', ensureAuthenticated, (req, res) => {
   res.render('games/logicGames');
 });
 
-app.use('/games/memorymath', memoryMathRoutes);
-app.use('/', snakeGameRoutes);
+app.use('/games/memorymath', ensureAuthenticated, memoryMathRoutes);
+app.use('/', ensureAuthenticated, snakeGameRoutes);
 
 // Fallback to home page
 app.get('/{*splat}', (req, res) => {
