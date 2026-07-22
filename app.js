@@ -25,6 +25,9 @@ const User = require('./models/Profile');
 const { Challenge, GameLog } = require('./models/Challenge');
 const Friend = require('./models/Friend');
 
+// Import utilities
+const { initDailyChallengeCron } = require('./utils/cronJobs');
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -120,8 +123,11 @@ const seedData = async () => {
   }
 };
 
-// Execute seeding after connection is established
-setTimeout(seedData, 2000);
+// Execute seeding and start Daily Challenge Cron Job after connection is established
+setTimeout(() => {
+  seedData();
+  initDailyChallengeCron();
+}, 2000);
 
 // Configure EJS view engine
 app.set('view engine', 'ejs');

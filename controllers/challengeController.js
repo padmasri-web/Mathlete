@@ -1,10 +1,45 @@
-const { Challenge, GameLog } = require('../models/Challenge');
+const { Challenge } = require('../models/Challenge');
+const DailyChallenge = require('../models/DailyChallenge');
+const { generateDailyChallenge, getISTDateString } = require('../utils/cronJobs');
 
+// 1. Fetch single active daily challenge for today (Asia/Kolkata date)
+exports.getActiveDailyChallenge = async (req, res) => {
+  try {
+    const todayDate = getISTDateString();
+
+    // Query MongoDB for today's challenge document
+    let challenge = await DailyChallenge.findOne({ date: todayDate });
+
+    // Fallback: If not found, generate on the fly
+    if (!challenge) {
+      console.log(`[Controller] Daily Challenge for ${todayDate} not found. Generating now...`);
+      challenge = await generateDailyChallenge();
+    }
+
+    if (res && res.json) {
+      return res.json({
+        success: true,
+        date: todayDate,
+        challenge
+      });
+    }
+
+    return challenge;
+  } catch (error) {
+    console.error("Error in getActiveDailyChallenge:", error.message);
+    if (res && res.status) {
+      return res.status(500).json({ success: false, message: "Failed to retrieve active daily challenge." });
+    }
+    throw error;
+  }
+};
+
+// 2. Fetch challenges summary for the dashboard view
 exports.getChallengesSummary = async (req, res) => {
   try {
     const dbChallenges = await Challenge.find();
     const user = req.user;
-    
+
     const mathRating = user && user.ratings ? user.ratings.math : 1000;
     const logicRating = user && user.ratings ? user.ratings.logic : 1000;
     const memoryRating = user && user.ratings ? user.ratings.memory : 1000;
@@ -24,7 +59,12 @@ exports.getChallengesSummary = async (req, res) => {
       badgeColor: c.badgeColor
     }));
 
-    // Count user's completed quests today for progress
+    const todayDate = getISTDateString();
+    let dailyChallenge = await DailyChallenge.findOne({ date: todayDate });
+    if (!dailyChallenge) {
+      dailyChallenge = await generateDailyChallenge();
+    }
+
     const completedQuestsCount = user ? user.quests.filter(q => q.completed).length : 0;
     const totalQuestsCount = user ? user.quests.length : 1;
 
@@ -35,7 +75,8 @@ exports.getChallengesSummary = async (req, res) => {
         expiresIn: "23:59"
       },
       categories,
-      gameModes
+      gameModes,
+      dailyChallenge
     });
   } catch (error) {
     console.error("Error in getChallengesSummary:", error.message);

@@ -31,16 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let timerSeconds = 38 * 60 + 42;
 
   function startCountdown() {
+    if (!timerText) return;
     const interval = setInterval(() => {
       if (timerSeconds <= 0) {
         clearInterval(interval);
-        timerText.textContent = "00:00";
+        if (timerText) timerText.textContent = "00:00";
         return;
       }
       timerSeconds--;
       const minutes = Math.floor(timerSeconds / 60);
       const seconds = timerSeconds % 60;
-      timerText.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      if (timerText) timerText.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }, 1000);
   }
 
@@ -87,6 +88,25 @@ document.addEventListener('DOMContentLoaded', () => {
           element.textContent = cat.statsCount;
         }
       });
+
+      // Populate Today's Daily Challenges parameters
+      if (data.dailyChallenge) {
+        const dc = data.dailyChallenge;
+        const loText = document.getElementById('target-lightsout-text');
+        const loXp = document.getElementById('target-lightsout-xp');
+        if (loText && dc.lightsOut) loText.textContent = `${dc.lightsOut.gridDifficulty} · Max ${dc.lightsOut.targetMoves} moves`;
+        if (loXp && dc.lightsOut) loXp.textContent = `+${dc.lightsOut.rewardXP} XP`;
+
+        const mmText = document.getElementById('target-memory-text');
+        const mmXp = document.getElementById('target-memory-xp');
+        if (mmText && dc.memoryMatch) mmText.textContent = `${dc.memoryMatch.pairCount} Pairs · ${dc.memoryMatch.timeLimit}s`;
+        if (mmXp && dc.memoryMatch) mmXp.textContent = `+${dc.memoryMatch.rewardXP} XP`;
+
+        const sdkText = document.getElementById('target-sudoku-text');
+        const sdkXp = document.getElementById('target-sudoku-xp');
+        if (sdkText && dc.sudoku) sdkText.textContent = `${dc.sudoku.difficulty} · ${dc.sudoku.initialClues} Clues`;
+        if (sdkXp && dc.sudoku) sdkXp.textContent = `+${dc.sudoku.rewardXP} XP`;
+      }
 
     } catch (error) {
       console.warn("Failed to load dashboard data from backend APIs. Running local mock engine.", error);
@@ -299,8 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectedCategory = card.getAttribute('data-category');
 
       // Dynamic shift of Game Modes to selected category
-      modeSprintBadge.textContent = selectedCategory;
-      modeFastBadge.textContent = selectedCategory;
+      if (modeSprintBadge) modeSprintBadge.textContent = selectedCategory;
+      if (modeFastBadge) modeFastBadge.textContent = selectedCategory;
 
       // Swap accent badge colors based on category
       const colorMap = {
@@ -311,8 +331,8 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const targetColor = colorMap[selectedCategory] || 'var(--accent-royal-blue)';
-      modeSprintBadge.style.backgroundColor = targetColor;
-      modeFastBadge.style.backgroundColor = targetColor;
+      if (modeSprintBadge) modeSprintBadge.style.backgroundColor = targetColor;
+      if (modeFastBadge) modeFastBadge.style.backgroundColor = targetColor;
 
       // Small category pop animation
       card.style.transform = 'scale(1.05)';
@@ -323,17 +343,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Rewards button action
-  claimRewardsBtn.addEventListener('click', () => {
-    if (challengesCompleted >= totalChallenges) {
-      alert("Congratulations! You've unlocked today's Daily Trophy! +500 Coins!");
-      currentCoins += 500;
-      animateCounter(coinsCount, currentCoins);
-      challengesCompleted = 0;
-      updateDailyProgressHTML();
-    } else {
-      alert(`Complete ${totalChallenges - challengesCompleted} more daily challenges to unlock the chest!`);
-    }
-  });
+  if (claimRewardsBtn) {
+    claimRewardsBtn.addEventListener('click', () => {
+      if (challengesCompleted >= totalChallenges) {
+        alert("Congratulations! You've unlocked today's Daily Trophy! +500 Coins!");
+        currentCoins += 500;
+        animateCounter(coinsCount, currentCoins);
+        challengesCompleted = 0;
+        updateDailyProgressHTML();
+      } else {
+        alert(`Complete ${totalChallenges - challengesCompleted} more daily challenges to unlock the chest!`);
+      }
+    });
+  }
 
   // Counter animation utility
   function animateCounter(element, target) {

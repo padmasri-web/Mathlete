@@ -1,82 +1,64 @@
 <div class="dashboard-left">
 
-    <div class="bento-grid" id="main-bento-grid">
+    <div class="games-showcase-grid">
 
-        <!-- Large "Daily Challenges" Progress Card -->
-        <div class="card daily-challenges-card" id="card-daily-challenges">
-            <div class="card-header-with-badge">
-                <h2
-                    style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; text-transform: uppercase;">
-                    Daily Challenges</h2>
-                <div class="countdown-badge" id="challenge-timer" title="Time remaining today">
-                    <span>⏱️</span>
-                    <span id="timer-text">00:38</span>
-                </div>
-            </div>
-            <p class="card-subtitle">Complete to earn rewards</p>
-
-            <div class="progress-section">
-                <div class="progress-track">
-                    <div class="progress-fill" id="daily-challenges-progress-fill"></div>
-                    <div class="progress-label" id="daily-challenges-progress-label">0/6</div>
-                </div>
-                <div class="progress-icon" id="claim-rewards-btn" title="Claim Rewards">
-                    🏆
+        <!-- Lights Out -->
+        <div class="card game-showcase-card" onclick="window.location.href='/games/lightsout'">
+            <div class="card-glow-bg" style="background: radial-gradient(circle, rgba(255,210,63,0.25) 0%, transparent 70%);"></div>
+            <div class="game-card-icon" style="background: linear-gradient(135deg, #FFD23F, #ff9f1c);">💡</div>
+            <div class="game-card-content">
+                <span class="game-category-tag" style="background: rgba(255,210,63,0.18); color: #b8860b;">PUZZLE</span>
+                <h3 class="game-card-title">Lights Out</h3>
+                <p class="game-card-desc">Toggle adjacent tiles to clear the grid</p>
+                <div class="game-card-footer">
+                    <span class="game-rating-badge">★ <span id="count-math">1003</span></span>
+                    <span class="play-arrow-btn">Play ➔</span>
                 </div>
             </div>
         </div>
 
-        <!-- Four category cards (Math, Memory, Puzzle, Logic) -->
-        <!-- Math Category / Lights Out -->
-        <div class="card category-card active" id="category-math" data-category="Math" style="cursor: pointer;" onclick="window.location.href='/games/lightsout'">
-            <div class="category-icon-box" style="background-color: #FFD23F;">💡</div>
-            <span class="category-name">Lights Out</span>
-            <span class="category-stats-count" id="count-math">1003</span>
-        </div>
-
-        <!-- Memory Category -->
-        <div class="card category-card" id="category-memory" data-category="Memory" style="cursor: pointer;" onclick="window.location.href='/games/memorymath'">
-            <div class="category-icon-box" style="background-color: var(--accent-royal-blue);">🧠</div>
-            <span class="category-name">Memory Match</span>
-            <span class="category-stats-count" id="count-memory">840</span>
-        </div>
-
-        <!-- Puzzle Category / Sudoku -->
-        <div class="card category-card" id="category-puzzle" data-category="Puzzle" style="cursor: pointer;" onclick="window.location.href='/games/sudoku'">
-            <div class="category-icon-box" style="background-color: var(--accent-aqua);">🧩</div>
-            <span class="category-name">Sudoku</span>
-            <span class="category-stats-count" id="count-puzzle">512</span>
-        </div>
-
-        <!-- Logic Category -->
-        <div class="card category-card" id="category-logic" data-category="Logic" style="cursor: pointer;" onclick="window.location.href='/games/snake'">
-            <div class="category-icon-box" style="background-color: var(--accent-hot-pink);">🔮</div>
-            <span class="category-name">Snake Game</span>
-            <span class="category-stats-count" id="count-logic">620</span>
-        </div>
-
-        <!-- Game Modes Cards (Sprint Duels, Fast & First) -->
-        <div class="card mode-card" id="mode-sprint-duels" style="cursor: pointer;"
-            onclick="window.location.href='/games/crossmath'">
-            <div class="mode-badge" style="background-color: var(--accent-hot-pink);">Math</div>
-            <div class="mode-info">
-                <h3 class="mode-title">Sprint Duels</h3>
-                <p class="mode-desc">Race to solve the most in 1 minute</p>
-            </div>
-            <div class="mode-action">
-                ➔
+        <!-- Memory Match -->
+        <div class="card game-showcase-card" onclick="window.location.href='/games/memorymath'">
+            <div class="card-glow-bg" style="background: radial-gradient(circle, rgba(69,100,198,0.25) 0%, transparent 70%);"></div>
+            <div class="game-card-icon" style="background: linear-gradient(135deg, #4564C6, #50D1E0);">🧠</div>
+            <div class="game-card-content">
+                <span class="game-category-tag" style="background: rgba(69,100,198,0.18); color: #4564C6;">MEMORY</span>
+                <h3 class="game-card-title">Memory Match</h3>
+                <p class="game-card-desc">Match math symbol pairs against the clock</p>
+                <div class="game-card-footer">
+                    <span class="game-rating-badge">★ <span id="count-memory">840</span></span>
+                    <span class="play-arrow-btn">Play ➔</span>
+                </div>
             </div>
         </div>
 
-        <div class="card mode-card" id="mode-fast-first" style="cursor: pointer;"
-            onclick="window.location.href='/games/sudoku'">
-            <div class="mode-badge" style="background-color: var(--accent-royal-blue);">Math</div>
-            <div class="mode-info">
-                <h3 class="mode-title">Fast & First</h3>
-                <p class="mode-desc">Be the first to answer each question</p>
+        <!-- Sudoku -->
+        <div class="card game-showcase-card" onclick="window.location.href='/games/sudoku'">
+            <div class="card-glow-bg" style="background: radial-gradient(circle, rgba(80,209,224,0.25) 0%, transparent 70%);"></div>
+            <div class="game-card-icon" style="background: linear-gradient(135deg, #50D1E0, #4564C6);">🧩</div>
+            <div class="game-card-content">
+                <span class="game-category-tag" style="background: rgba(80,209,224,0.18); color: #0097a7;">LOGIC</span>
+                <h3 class="game-card-title">Sudoku Challenge</h3>
+                <p class="game-card-desc">Solve the 9x9 grid with numbers 1 to 9</p>
+                <div class="game-card-footer">
+                    <span class="game-rating-badge">★ <span id="count-puzzle">512</span></span>
+                    <span class="play-arrow-btn">Play ➔</span>
+                </div>
             </div>
-            <div class="mode-action">
-                ➔
+        </div>
+
+        <!-- Snake Game -->
+        <div class="card game-showcase-card" onclick="window.location.href='/games/snake'">
+            <div class="card-glow-bg" style="background: radial-gradient(circle, rgba(244,47,118,0.25) 0%, transparent 70%);"></div>
+            <div class="game-card-icon" style="background: linear-gradient(135deg, #F42F76, #F58DB4);">🐍</div>
+            <div class="game-card-content">
+                <span class="game-category-tag" style="background: rgba(244,47,118,0.18); color: #F42F76;">ARCADE</span>
+                <h3 class="game-card-title">Snake Game</h3>
+                <p class="game-card-desc">Eat food, grow longer, & set high scores</p>
+                <div class="game-card-footer">
+                    <span class="game-rating-badge">★ <span id="count-logic">620</span></span>
+                    <span class="play-arrow-btn">Play ➔</span>
+                </div>
             </div>
         </div>
 
