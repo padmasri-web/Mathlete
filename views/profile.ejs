@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matiks - User Profile</title>
-  <meta name="description" content="View your Matiks game ratings, streaks, achievements, stats overview, and recent duel history.">
+  <meta name="description"
+    content="View your Matiks game ratings, streaks, achievements, stats overview, and recent duel history.">
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
@@ -12,436 +14,606 @@
   <link rel="stylesheet" href="/css/profile.css">
   <link rel="stylesheet" href="/css/backgroundFX.css">
 </head>
+
 <body>
 
   <div class="dashboard-container">
     <%- include('dashboard/leftbar') %>
 
-    <main class="main-content">
-      <%- include('dashboard/navbar') %>
+      <main class="main-content">
+        <%- include('dashboard/navbar') %>
 
-      <div class="profile-grid-layout">
-        <!-- Main Column (Left side) -->
-        <div class="profile-main-column">
-          
-          <!-- User Details Card -->
-          <div class="profile-card">
-            <div class="profile-banner">
-              <button class="banner-back-btn" onclick="window.location.href='/'">←</button>
-              <div class="banner-options-container" style="position: absolute; top: 15px; right: 15px; z-index: 10;">
-                <button class="banner-options-btn" id="banner-options-btn" onclick="toggleSettingsDropdown(event)">⋮</button>
-                <div class="settings-dropdown-menu" id="settings-dropdown-menu">
-                  <button class="dropdown-item-btn" onclick="openEditProfileModal()">Update Profile</button>
-                  <button class="dropdown-item-btn" onclick="alert('Privacy Settings: Standard high-security privacy protocol is active.')">Privacy</button>
-                  <button class="dropdown-item-btn" onclick="alert('Support: Contact us at support@matiks.com')">Support</button>
-                </div>
-              </div>
-              <div class="banner-math-symbol" style="top: 15px; left: 20px; font-size: 20px;">%</div>
-              <div class="banner-math-symbol" style="top: 25px; left: 100px; font-size: 22px;">+</div>
-              <div class="banner-math-symbol" style="top: 80px; left: 25px; font-size: 24px;">×</div>
-              <div class="banner-math-symbol" style="top: 15px; right: 120px; font-size: 20px;">−</div>
-              <div class="banner-math-symbol" style="top: 70px; right: 30px; font-size: 22px;">÷</div>
-              <div class="banner-math-symbol" style="top: 20px; right: 20px; font-size: 20px;">+</div>
-              <span class="banner-rank-title">NOVICE</span>
-            </div>
-            
-            <div class="profile-avatar-large-wrapper">
-              <div class="profile-avatar-large" id="profile-avatar-large" style="<%= (user && user.avatarUrl) ? 'background-image: url(' + user.avatarUrl + '); background-size: cover; background-position: center; color: transparent;' : '' %>">
-                <%= (user && user.avatarUrl) ? '' : (user ? user.name.charAt(0) : 'J') %>
-              </div>
-            </div>
-            
-            <div class="profile-info-body">
-              <div>
-                <h2 class="profile-main-name" id="profile-main-name"><%= user.name %></h2>
-                <div class="profile-main-username" id="profile-main-username">@<%= user.username %></div>
-              </div>
-              <div class="profile-friends-count d-flex align-items-center gap-1">
-                <svg width="8" height="8" viewBox="0 0 10 10" style="margin-right: 2px;"><circle cx="5" cy="5" r="4" fill="#22c55e"/></svg>
-                0 Friends
-              </div>
-              
-              <div class="profile-meta-pills" id="profile-meta-pills">
-                <button class="meta-pill-btn" id="college-btn" onclick="promptAddCollege()">
-                  <span id="college-btn-icon"><%= user && user.collage ? '🎒' : '+' %></span> 
-                  <span id="college-btn-text"><%= user && user.collage ? user.collage : 'Add College' %></span>
-                </button>
-                
-                <% if (user && user.socials) { %>
-                  <% 
-                     let platform = 'generic';
-                     let linkText = user.socials;
-                     let lowerLink = user.socials.toLowerCase();
-                     if (lowerLink.includes('linkedin')) platform = 'linkedin';
-                     else if (lowerLink.includes('github')) platform = 'github';
-                     else if (lowerLink.includes('twitter') || lowerLink.includes('x.com')) platform = 'twitter';
-                     else if (lowerLink.includes('instagram')) platform = 'instagram';
-                     
-                     try {
-                       let cleanUrl = user.socials.replace(/^(https?:\/\/)?(www\.)?/, '');
-                       let parts = cleanUrl.split('/');
-                       let namePart = parts.filter(p => p.trim() !== '').pop();
-                       if (namePart) {
-                         linkText = namePart;
-                         if (linkText.length > 15) linkText = linkText.substring(0, 12) + '...';
-                       }
-                     } catch(e) {}
-                  %>
-                  <% if (platform === 'linkedin') { %>
-                    <div class="social-badge-pill" id="socials-btn" onclick="window.open('<%= user.socials %>', '_blank')">
-                      <div class="social-badge-icon-circle" style="background-color: #0077b5;">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                      </div>
-                      <span id="socials-btn-text"><%= linkText %></span>
-                    </div>
-                  <% } else if (platform === 'github') { %>
-                    <div class="social-badge-pill" id="socials-btn" onclick="window.open('<%= user.socials %>', '_blank')">
-                      <div class="social-badge-icon-circle" style="background-color: #24292e;">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                      </div>
-                      <span id="socials-btn-text"><%= linkText %></span>
-                    </div>
-                  <% } else if (platform === 'twitter') { %>
-                    <div class="social-badge-pill" id="socials-btn" onclick="window.open('<%= user.socials %>', '_blank')">
-                      <div class="social-badge-icon-circle" style="background-color: #000000;">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                      </div>
-                      <span id="socials-btn-text"><%= linkText %></span>
-                    </div>
-                  <% } else if (platform === 'instagram') { %>
-                    <div class="social-badge-pill" id="socials-btn" onclick="window.open('<%= user.socials %>', '_blank')">
-                      <div class="social-badge-icon-circle" style="background-color: #e1306c;">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                      </div>
-                      <span id="socials-btn-text"><%= linkText %></span>
-                    </div>
-                  <% } else { %>
-                    <div class="social-badge-pill" id="socials-btn" onclick="window.open('<%= user.socials %>', '_blank')">
-                      <div class="social-badge-icon-circle" style="background-color: #4b5563;">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                      </div>
-                      <span id="socials-btn-text"><%= linkText %></span>
-                    </div>
-                  <% } %>
-                <% } else { %>
-                  <button class="meta-pill-btn" id="socials-btn" onclick="promptAddSocials()">
-                    <span id="socials-btn-icon">+</span> <span id="socials-btn-text">Add Socials</span>
-                  </button>
-                <% } %>
-              </div>
-              
-              <div class="profile-actions-row">
-                <button class="action-green-btn" onclick="window.location.href='/friends/find'">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-                  ADD MORE FRIENDS
-                </button>
-                <button class="action-icon-btn" onclick="copyProfileUrl()">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          <div class="profile-grid-layout">
+            <!-- Main Column (Left side) -->
+            <div class="profile-main-column">
 
-          <!-- Ratings Card -->
-          <div class="profile-section-card">
-            <div class="section-header-row">
-              <h3 class="section-header-title">Ratings</h3>
-              <button class="section-action-arrow">➔</button>
-            </div>
-            
-            <div class="ratings-grid">
-              <!-- Math Rating -->
-              <div class="rating-item-box">
-                <div class="rating-dot-badge" style="background: rgba(255, 210, 63, 0.12); color: #FFD23F;">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2" /></svg>
-                </div>
-                <span class="rating-number" id="rating-math-val"><%= (user && user.ratings) ? user.ratings.math : 1000 %></span>
-                <span class="rating-label-name">Math</span>
-              </div>
-              
-              <!-- Logic Rating -->
-              <div class="rating-item-box">
-                <div class="rating-dot-badge" style="background: rgba(244, 47, 118, 0.12); color: #F42F76;">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2" /></svg>
-                </div>
-                <span class="rating-number" id="rating-logic-val"><%= (user && user.ratings) ? user.ratings.logic : 1000 %></span>
-                <span class="rating-label-name">Logic</span>
-              </div>
-              
-              <!-- Memory Rating -->
-              <div class="rating-item-box">
-                <div class="rating-dot-badge" style="background: rgba(69, 100, 198, 0.12); color: #4564C6;">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2" /></svg>
-                </div>
-                <span class="rating-number" id="rating-memory-val"><%= (user && user.ratings) ? user.ratings.memory : 1000 %></span>
-                <span class="rating-label-name">Memory</span>
-              </div>
-              
-              <!-- Puzzle Rating -->
-              <div class="rating-item-box">
-                <div class="rating-dot-badge" style="background: rgba(80, 209, 224, 0.12); color: #50D1E0;">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2" /></svg>
-                </div>
-                <span class="rating-number" id="rating-puzzle-val"><%= (user && user.ratings) ? user.ratings.puzzle : 1000 %></span>
-                <span class="rating-label-name">Puzzle</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Achievements Card -->
-          <div class="profile-section-card">
-            <div class="section-header-row">
-              <h3 class="section-header-title">Achievements</h3>
-              <button class="section-action-arrow">➔</button>
-            </div>
-            
-            <div class="achievements-scroll-row">
-              <!-- Streak 3 -->
-              <div class="achievement-hexagon-wrapper">
-                <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
-                  <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)" stroke="rgba(82, 81, 110, 0.15)" stroke-width="4"/>
-                </svg>
-                <div class="achievement-inner-content text-primary">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z"/><path d="M9 16h6"/><path d="M10 20h4"/><path d="M12 11.5V16"/></svg>
-                  <span class="achievement-hex-number">3</span>
-                </div>
-              </div>
-              
-              <!-- Streak 7 -->
-              <div class="achievement-hexagon-wrapper">
-                <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
-                  <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)" stroke="rgba(82, 81, 110, 0.15)" stroke-width="4"/>
-                </svg>
-                <div class="achievement-inner-content text-primary">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z"/><path d="M9 16h6"/><path d="M10 20h4"/><path d="M12 11.5V16"/></svg>
-                  <span class="achievement-hex-number">7</span>
-                </div>
-              </div>
-
-              <!-- Streak 14 -->
-              <div class="achievement-hexagon-wrapper">
-                <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
-                  <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)" stroke="rgba(82, 81, 110, 0.15)" stroke-width="4"/>
-                </svg>
-                <div class="achievement-inner-content text-primary">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z"/><path d="M9 16h6"/><path d="M10 20h4"/><path d="M12 11.5V16"/></svg>
-                  <span class="achievement-hex-number">14</span>
-                </div>
-              </div>
-
-              <!-- Streak 30 -->
-              <div class="achievement-hexagon-wrapper">
-                <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
-                  <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)" stroke="rgba(82, 81, 110, 0.15)" stroke-width="4"/>
-                </svg>
-                <div class="achievement-inner-content text-primary">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M8 9V5a4 4 0 0 1 8 0v4"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="12" y1="9" x2="12" y2="19"/></svg>
-                  <span class="achievement-hex-number">30</span>
-                </div>
-              </div>
-
-              <!-- Streak 50 -->
-              <div class="achievement-hexagon-wrapper" style="opacity: 0.5;">
-                <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
-                  <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.04)" stroke="rgba(82, 81, 110, 0.1)" stroke-width="4"/>
-                </svg>
-                <div class="achievement-inner-content text-primary">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M8 9V5a4 4 0 0 1 8 0v4"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="12" y1="9" x2="12" y2="19"/></svg>
-                  <span class="achievement-hex-number">50</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Last 5 Games Card -->
-          <div class="profile-section-card">
-            <div class="section-header-row">
-              <h3 class="section-header-title">Last 5 Games</h3>
-              <button class="section-action-arrow" onclick="window.location.href='/profile/history'">➔</button>
-            </div>
-            
-            <div class="game-tabs-row">
-              <button class="game-tab-item active d-inline-flex align-items-center gap-1">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a7 7 0 0 0-7 7c0 2.5 2 4.5 4.5 5h5c2.5-.5 4.5-2.5 4.5-5a7 7 0 0 0-7-7z"/></svg>
-                Math
-              </button>
-              <button class="game-tab-item d-inline-flex align-items-center gap-1">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="8"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
-                Logic
-              </button>
-              <button class="game-tab-item d-inline-flex align-items-center gap-1">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-4.12 2.5 2.5 0 0 1 0-4.12A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-4.12 2.5 2.5 0 0 0 0-4.12A2.5 2.5 0 0 0 14.5 2z"/></svg>
-                Memory
-              </button>
-              <button class="game-tab-item d-inline-flex align-items-center gap-1">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3"/><path d="M19 12h3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg>
-                Puzzle
-              </button>
-            </div>
-            
-            <div class="game-log-list-container" id="game-log-list-container">
-              <% if (typeof gameLogs !== 'undefined' && gameLogs && gameLogs.length > 0) { %>
-                <% gameLogs.forEach(log => { %>
-                  <% 
-                    const logDate = log.playedAt ? new Date(log.playedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : '14th Jul';
-                    const logTime = log.playedAt ? new Date(log.playedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '08:09 PM';
-                    const isWinner = log.playerScore >= log.opponentScore;
-                    const isOpponentWinner = log.opponentScore > log.playerScore;
-                  %>
-                  <div class="game-log-entry-card" data-category="<%= log.category %>">
-                    <div class="game-log-header-text">
-                      <%= log.mode %> • <%= logTime %> • <%= logDate %>
-                    </div>
-                    
-                    <div class="game-log-player-list">
-                      <!-- Player 1 (You) -->
-                      <div class="log-player-row">
-                        <div class="log-player-left">
-                          <div class="log-player-avatar active" style="background-color: var(--accent-royal-blue);"><%= user ? user.name.charAt(0) : 'J' %></div>
-                          <div class="log-player-details">
-                            <span class="log-player-username"><%= user ? user.username : 'jhalakyadav9779' %></span>
-                            <span class="log-player-rank-rating">1003 <span class="rating-up">+<%= log.playerRatingChange %></span></span>
-                          </div>
-                        </div>
-                        <div class="log-player-score-right">
-                          <span class="log-player-score-val <%= isWinner ? 'winner' : '' %>"><%= log.playerScore %></span>
-                          <% if (isWinner) { %>
-                            <span style="color: #22c55e; font-size: 14px; font-weight: bold;">◀</span>
-                          <% } %>
-                        </div>
-                      </div>
-                      
-                      <!-- Player 2 -->
-                      <div class="log-player-row" style="opacity: 0.85;">
-                        <div class="log-player-left">
-                          <div class="log-player-avatar" style="background-color: var(--accent-hot-pink);"><%= log.opponentName ? log.opponentName.charAt(0).toUpperCase() : 'O' %></div>
-                          <div class="log-player-details">
-                            <span class="log-player-username"><%= log.opponentName || 'Opponent' %></span>
-                            <span class="log-player-rank-rating">1005 <span class="rating-down"><%= log.opponentRatingChange >= 0 ? '+' : '' %><%= log.opponentRatingChange %></span></span>
-                          </div>
-                        </div>
-                        <div class="log-player-score-right">
-                          <span class="log-player-score-val <%= isOpponentWinner ? 'winner' : '' %>"><%= log.opponentScore %></span>
-                          <% if (isOpponentWinner) { %>
-                            <span style="color: #22c55e; font-size: 14px; font-weight: bold;">◀</span>
-                          <% } %>
-                        </div>
-                      </div>
+              <!-- User Details Card -->
+              <div class="profile-card">
+                <div class="profile-banner">
+                  <button class="banner-back-btn" onclick="window.location.href='/'">←</button>
+                  <div class="banner-options-container"
+                    style="position: absolute; top: 15px; right: 15px; z-index: 10;">
+                    <button class="banner-options-btn" id="banner-options-btn"
+                      onclick="toggleSettingsDropdown(event)">⋮</button>
+                    <div class="settings-dropdown-menu" id="settings-dropdown-menu">
+                      <button class="dropdown-item-btn" onclick="openEditProfileModal()">Update Profile</button>
+                      <button class="dropdown-item-btn"
+                        onclick="alert('Privacy Settings: Standard high-security privacy protocol is active.')">Privacy</button>
+                      <button class="dropdown-item-btn"
+                        onclick="alert('Support: Contact us at support@matiks.com')">Support</button>
                     </div>
                   </div>
-                <% }) %>
-              <% } else { %>
-                <div class="game-log-entry-card text-center" style="padding: 24px;">
-                  <span class="text-muted" style="font-size: 12px; font-weight: 600;">No games played in this category yet.</span>
+                  <div class="banner-math-symbol" style="top: 15px; left: 20px; font-size: 20px;">%</div>
+                  <div class="banner-math-symbol" style="top: 25px; left: 100px; font-size: 22px;">+</div>
+                  <div class="banner-math-symbol" style="top: 80px; left: 25px; font-size: 24px;">×</div>
+                  <div class="banner-math-symbol" style="top: 15px; right: 120px; font-size: 20px;">−</div>
+                  <div class="banner-math-symbol" style="top: 70px; right: 30px; font-size: 22px;">÷</div>
+                  <div class="banner-math-symbol" style="top: 20px; right: 20px; font-size: 20px;">+</div>
+                  <span class="banner-rank-title">NOVICE</span>
                 </div>
-              <% } %>
+
+                <div class="profile-avatar-large-wrapper">
+                  <div class="profile-avatar-large" id="profile-avatar-large"
+                    style="<%= (user && user.avatarUrl) ? 'background-image: url(' + user.avatarUrl + '); background-size: cover; background-position: center; color: transparent;' : '' %>">
+                    <%= (user && user.avatarUrl) ? '' : (user ? user.name.charAt(0) : 'J' ) %>
+                  </div>
+                </div>
+
+                <div class="profile-info-body">
+                  <div>
+                    <h2 class="profile-main-name" id="profile-main-name">
+                      <%= user.name %>
+                    </h2>
+                    <div class="profile-main-username" id="profile-main-username">@<%= user.username %>
+                    </div>
+                  </div>
+                  <div class="profile-friends-count d-flex align-items-center gap-1">
+                    <svg width="8" height="8" viewBox="0 0 10 10" style="margin-right: 2px;">
+                      <circle cx="5" cy="5" r="4" fill="#22c55e" />
+                    </svg>
+                    0 Friends
+                  </div>
+
+                  <div class="profile-meta-pills" id="profile-meta-pills">
+                    <button class="meta-pill-btn" id="college-btn" onclick="promptAddCollege()">
+                      <span id="college-btn-icon">
+                        <%= user && user.collage ? '🎒' : '+' %>
+                      </span>
+                      <span id="college-btn-text">
+                        <%= user && user.collage ? user.collage : 'Add College' %>
+                      </span>
+                    </button>
+
+                    <% if (user && user.socials) { %>
+                      <% let platform='generic' ; let linkText=user.socials; let lowerLink=user.socials.toLowerCase();
+                        if (lowerLink.includes('linkedin')) platform='linkedin' ; else if (lowerLink.includes('github'))
+                        platform='github' ; else if (lowerLink.includes('twitter') || lowerLink.includes('x.com'))
+                        platform='twitter' ; else if (lowerLink.includes('instagram')) platform='instagram' ; try { let
+                        cleanUrl=user.socials.replace(/^(https?:\/\/)?(www\.)?/, '' ); let parts=cleanUrl.split('/');
+                        let namePart=parts.filter(p=> p.trim() !== '').pop();
+                        if (namePart) {
+                        linkText = namePart;
+                        if (linkText.length > 15) linkText = linkText.substring(0, 12) + '...';
+                        }
+                        } catch(e) {}
+                        %>
+                        <% if (platform==='linkedin' ) { %>
+                          <div class="social-badge-pill" id="socials-btn"
+                            onclick="window.open('<%= user.socials %>', '_blank')">
+                            <div class="social-badge-icon-circle" style="background-color: #0077b5;">
+                              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                                <path
+                                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                              </svg>
+                            </div>
+                            <span id="socials-btn-text">
+                              <%= linkText %>
+                            </span>
+                          </div>
+                          <% } else if (platform==='github' ) { %>
+                            <div class="social-badge-pill" id="socials-btn"
+                              onclick="window.open('<%= user.socials %>', '_blank')">
+                              <div class="social-badge-icon-circle" style="background-color: #24292e;">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                                  <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                              </div>
+                              <span id="socials-btn-text">
+                                <%= linkText %>
+                              </span>
+                            </div>
+                            <% } else if (platform==='twitter' ) { %>
+                              <div class="social-badge-pill" id="socials-btn"
+                                onclick="window.open('<%= user.socials %>', '_blank')">
+                                <div class="social-badge-icon-circle" style="background-color: #000000;">
+                                  <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                                    <path
+                                      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                  </svg>
+                                </div>
+                                <span id="socials-btn-text">
+                                  <%= linkText %>
+                                </span>
+                              </div>
+                              <% } else if (platform==='instagram' ) { %>
+                                <div class="social-badge-pill" id="socials-btn"
+                                  onclick="window.open('<%= user.socials %>', '_blank')">
+                                  <div class="social-badge-icon-circle" style="background-color: #e1306c;">
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                    </svg>
+                                  </div>
+                                  <span id="socials-btn-text">
+                                    <%= linkText %>
+                                  </span>
+                                </div>
+                                <% } else { %>
+                                  <div class="social-badge-pill" id="socials-btn"
+                                    onclick="window.open('<%= user.socials %>', '_blank')">
+                                    <div class="social-badge-icon-circle" style="background-color: #4b5563;">
+                                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="2" y1="12" x2="22" y2="12" />
+                                        <path
+                                          d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                                      </svg>
+                                    </div>
+                                    <span id="socials-btn-text">
+                                      <%= linkText %>
+                                    </span>
+                                  </div>
+                                  <% } %>
+                                    <% } else { %>
+                                      <button class="meta-pill-btn" id="socials-btn" onclick="promptAddSocials()">
+                                        <span id="socials-btn-icon">+</span> <span id="socials-btn-text">Add
+                                          Socials</span>
+                                      </button>
+                                      <% } %>
+                  </div>
+
+                  <div class="profile-actions-row">
+                    <button class="action-green-btn" onclick="window.location.href='/friends/find'">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="22" y1="11" x2="16" y2="11" />
+                      </svg>
+                      ADD MORE FRIENDS
+                    </button>
+                    <button class="action-icon-btn" onclick="copyProfileUrl()">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <polyline points="16 6 12 2 8 6" />
+                        <line x1="12" y1="2" x2="12" y2="15" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ratings Card -->
+              <div class="profile-section-card">
+                <div class="section-header-row">
+                  <h3 class="section-header-title">Ratings</h3>
+                  <button class="section-action-arrow">➔</button>
+                </div>
+
+                <div class="ratings-grid">
+                  <!-- Math Rating -->
+                  <div class="rating-item-box">
+                    <div class="rating-dot-badge" style="background: rgba(255, 210, 63, 0.12); color: #FFD23F;">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <rect width="10" height="10" rx="2" />
+                      </svg>
+                    </div>
+                    <span class="rating-number" id="rating-math-val">
+                      <%= (user && user.ratings) ? user.ratings.math : 1000 %>
+                    </span>
+                    <span class="rating-label-name">Math</span>
+                  </div>
+
+                  <!-- Logic Rating -->
+                  <div class="rating-item-box">
+                    <div class="rating-dot-badge" style="background: rgba(244, 47, 118, 0.12); color: #F42F76;">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <rect width="10" height="10" rx="2" />
+                      </svg>
+                    </div>
+                    <span class="rating-number" id="rating-logic-val">
+                      <%= (user && user.ratings) ? user.ratings.logic : 1000 %>
+                    </span>
+                    <span class="rating-label-name">Logic</span>
+                  </div>
+
+                  <!-- Memory Rating -->
+                  <div class="rating-item-box">
+                    <div class="rating-dot-badge" style="background: rgba(69, 100, 198, 0.12); color: #4564C6;">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <rect width="10" height="10" rx="2" />
+                      </svg>
+                    </div>
+                    <span class="rating-number" id="rating-memory-val">
+                      <%= (user && user.ratings) ? user.ratings.memory : 1000 %>
+                    </span>
+                    <span class="rating-label-name">Memory</span>
+                  </div>
+
+                  <!-- Puzzle Rating -->
+                  <div class="rating-item-box">
+                    <div class="rating-dot-badge" style="background: rgba(80, 209, 224, 0.12); color: #50D1E0;">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                        <rect width="10" height="10" rx="2" />
+                      </svg>
+                    </div>
+                    <span class="rating-number" id="rating-puzzle-val">
+                      <%= (user && user.ratings) ? user.ratings.puzzle : 1000 %>
+                    </span>
+                    <span class="rating-label-name">Puzzle</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Achievements Card -->
+              <div class="profile-section-card">
+                <div class="section-header-row">
+                  <h3 class="section-header-title">Achievements</h3>
+                  <button class="section-action-arrow">➔</button>
+                </div>
+
+                <div class="achievements-scroll-row">
+                  <!-- Streak 3 -->
+                  <div class="achievement-hexagon-wrapper">
+                    <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
+                      <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)"
+                        stroke="rgba(82, 81, 110, 0.15)" stroke-width="4" />
+                    </svg>
+                    <div class="achievement-inner-content text-primary">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="mb-1">
+                        <path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z" />
+                        <path d="M9 16h6" />
+                        <path d="M10 20h4" />
+                        <path d="M12 11.5V16" />
+                      </svg>
+                      <span class="achievement-hex-number">3</span>
+                    </div>
+                  </div>
+
+                  <!-- Streak 7 -->
+                  <div class="achievement-hexagon-wrapper">
+                    <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
+                      <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)"
+                        stroke="rgba(82, 81, 110, 0.15)" stroke-width="4" />
+                    </svg>
+                    <div class="achievement-inner-content text-primary">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="mb-1">
+                        <path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z" />
+                        <path d="M9 16h6" />
+                        <path d="M10 20h4" />
+                        <path d="M12 11.5V16" />
+                      </svg>
+                      <span class="achievement-hex-number">7</span>
+                    </div>
+                  </div>
+
+                  <!-- Streak 14 -->
+                  <div class="achievement-hexagon-wrapper">
+                    <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
+                      <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)"
+                        stroke="rgba(82, 81, 110, 0.15)" stroke-width="4" />
+                    </svg>
+                    <div class="achievement-inner-content text-primary">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="mb-1">
+                        <path d="M12 2c-.5 2.5-3 3.5-3 6.5A3 3 0 0 0 12 11.5a3 3 0 0 0 3-3c0-3-2.5-4-3-6.5z" />
+                        <path d="M9 16h6" />
+                        <path d="M10 20h4" />
+                        <path d="M12 11.5V16" />
+                      </svg>
+                      <span class="achievement-hex-number">14</span>
+                    </div>
+                  </div>
+
+                  <!-- Streak 30 -->
+                  <div class="achievement-hexagon-wrapper">
+                    <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
+                      <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.08)"
+                        stroke="rgba(82, 81, 110, 0.15)" stroke-width="4" />
+                    </svg>
+                    <div class="achievement-inner-content text-primary">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="mb-1">
+                        <rect x="5" y="9" width="14" height="10" rx="2" />
+                        <path d="M8 9V5a4 4 0 0 1 8 0v4" />
+                        <line x1="9" y1="14" x2="15" y2="14" />
+                        <line x1="12" y1="9" x2="12" y2="19" />
+                      </svg>
+                      <span class="achievement-hex-number">30</span>
+                    </div>
+                  </div>
+
+                  <!-- Streak 50 -->
+                  <div class="achievement-hexagon-wrapper" style="opacity: 0.5;">
+                    <svg viewBox="0 0 100 100" class="achievement-hexagon-bg">
+                      <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="rgba(82, 81, 110, 0.04)"
+                        stroke="rgba(82, 81, 110, 0.1)" stroke-width="4" />
+                    </svg>
+                    <div class="achievement-inner-content text-primary">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="mb-1">
+                        <rect x="5" y="9" width="14" height="10" rx="2" />
+                        <path d="M8 9V5a4 4 0 0 1 8 0v4" />
+                        <line x1="9" y1="14" x2="15" y2="14" />
+                        <line x1="12" y1="9" x2="12" y2="19" />
+                      </svg>
+                      <span class="achievement-hex-number">50</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Last 5 Games Card -->
+              <div class="profile-section-card">
+                <div class="section-header-row">
+                  <h3 class="section-header-title">Last 5 Games</h3>
+                  <button class="section-action-arrow" onclick="window.location.href='/profile/history'">➔</button>
+                </div>
+
+                <div class="game-tabs-row">
+                  <button class="game-tab-item active d-inline-flex align-items-center gap-1">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                      <path d="M4 22h16" />
+                      <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                      <path d="M12 2a7 7 0 0 0-7 7c0 2.5 2 4.5 4.5 5h5c2.5-.5 4.5-2.5 4.5-5a7 7 0 0 0-7-7z" />
+                    </svg>
+                    Math
+                  </button>
+                  <button class="game-tab-item d-inline-flex align-items-center gap-1">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="10" r="8" />
+                      <path d="M12 18v4" />
+                      <path d="M8 22h8" />
+                    </svg>
+                    Logic
+                  </button>
+                  <button class="game-tab-item d-inline-flex align-items-center gap-1">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-4.12 2.5 2.5 0 0 1 0-4.12A2.5 2.5 0 0 1 9.5 2z" />
+                      <path
+                        d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-4.12 2.5 2.5 0 0 0 0-4.12A2.5 2.5 0 0 0 14.5 2z" />
+                    </svg>
+                    Memory
+                  </button>
+                  <button class="game-tab-item d-inline-flex align-items-center gap-1">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2v3" />
+                      <path d="M19 12h3" />
+                      <path d="M12 19v3" />
+                      <path d="M2 12h3" />
+                      <path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0z" />
+                    </svg>
+                    Puzzle
+                  </button>
+                </div>
+
+                <div class="game-log-list-container" id="game-log-list-container">
+                  <% if (typeof gameLogs !=='undefined' && gameLogs && gameLogs.length> 0) { %>
+                    <% gameLogs.forEach(log=> { %>
+                      <% const logDate=log.playedAt ? new Date(log.playedAt).toLocaleDateString('en-US', {
+                        day: 'numeric' , month: 'short' }) : '14th Jul' ; const logTime=log.playedAt ? new
+                        Date(log.playedAt).toLocaleTimeString('en-US', { hour: '2-digit' , minute: '2-digit' })
+                        : '08:09 PM' ; const isWinner=log.playerScore>= log.opponentScore;
+                        const isOpponentWinner = log.opponentScore > log.playerScore;
+                        %>
+                        <div class="game-log-entry-card" data-category="<%= log.category %>">
+                          <div class="game-log-header-text">
+                            <%= log.mode %> • <%= logTime %> • <%= logDate %>
+                          </div>
+
+                          <div class="game-log-player-list">
+                            <!-- Player 1 (You) -->
+                            <div class="log-player-row">
+                              <div class="log-player-left">
+                                <div class="log-player-avatar active"
+                                  style="background-color: var(--accent-royal-blue);">
+                                  <%= user ? user.name.charAt(0) : 'J' %>
+                                </div>
+                                <div class="log-player-details">
+                                  <span class="log-player-username">
+                                    <%= user ? user.username : 'jhalakyadav9779' %>
+                                  </span>
+                                  <span class="log-player-rank-rating">1003 <span class="rating-up">+<%=
+                                        log.playerRatingChange %></span></span>
+                                </div>
+                              </div>
+                              <div class="log-player-score-right">
+                                <span class="log-player-score-val <%= isWinner ? 'winner' : '' %>">
+                                  <%= log.playerScore %>
+                                </span>
+                                <% if (isWinner) { %>
+                                  <span style="color: #22c55e; font-size: 14px; font-weight: bold;">◀</span>
+                                  <% } %>
+                              </div>
+                            </div>
+
+                            <!-- Player 2 -->
+                            <div class="log-player-row" style="opacity: 0.85;">
+                              <div class="log-player-left">
+                                <div class="log-player-avatar" style="background-color: var(--accent-hot-pink);">
+                                  <%= log.opponentName ? log.opponentName.charAt(0).toUpperCase() : 'O' %>
+                                </div>
+                                <div class="log-player-details">
+                                  <span class="log-player-username">
+                                    <%= log.opponentName || 'Opponent' %>
+                                  </span>
+                                  <span class="log-player-rank-rating">1005 <span class="rating-down">
+                                      <%= log.opponentRatingChange>= 0 ? '+' : '' %><%= log.opponentRatingChange %>
+                                    </span></span>
+                                </div>
+                              </div>
+                              <div class="log-player-score-right">
+                                <span class="log-player-score-val <%= isOpponentWinner ? 'winner' : '' %>">
+                                  <%= log.opponentScore %>
+                                </span>
+                                <% if (isOpponentWinner) { %>
+                                  <span style="color: #22c55e; font-size: 14px; font-weight: bold;">◀</span>
+                                  <% } %>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <% }) %>
+                          <% } else { %>
+                            <div class="game-log-entry-card text-center" style="padding: 24px;">
+                              <span class="text-muted" style="font-size: 12px; font-weight: 600;">No games played in
+                                this category yet.</span>
+                            </div>
+                            <% } %>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Sidebar Column (Right side) -->
+            <div class="profile-side-column">
+
+              <!-- Math Rank Emblem Card -->
+              <div class="profile-section-card">
+                <div class="rank-card-header">
+                  <select class="rank-dropdown-custom">
+                    <option>⚙️ Math Rank</option>
+                    <option>⚙️ Logic Rank</option>
+                    <option>⚙️ Memory Rank</option>
+                    <option>⚙️ Puzzle Rank</option>
+                  </select>
+                  <button class="green-arrow-btn">➔</button>
+                </div>
+
+                <div class="rank-emblem-section">
+                  <div class="rank-emblem-shield-outer">
+                    <div class="rank-emblem-shield-inner">
+                      <div class="rank-emblem-center-diamond"></div>
+                    </div>
+                  </div>
+                  <span class="rank-emblem-label">NOVICE</span>
+                </div>
+
+                <div class="rank-rating-bar-container">
+                  <div class="rank-rating-bar-track">
+                    <div class="rank-rating-bar-fill"
+                      style="width: <%= (user && user.ratings) ? (user.ratings.math / 1200 * 100) : 83.3 %>%;"></div>
+                  </div>
+                  <div class="d-flex justify-content-between w-100 mt-1"
+                    style="font-size: 11px; font-weight: 700; color: var(--text-primary); opacity: 0.85;">
+                    <span>RANK RATING</span>
+                    <span id="rank-rating-fraction-text">
+                      <%= (user && user.ratings) ? user.ratings.math : 1000 %>/1200
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats Overview Card -->
+              <div class="profile-section-card">
+                <div class="section-header-row">
+                  <h3 class="section-header-title">Stats Overview</h3>
+                </div>
+
+                <div class="stats-overview-grid">
+                  <!-- Max Streak -->
+                  <div class="stat-overview-box">
+                    <div class="stat-box-left-content">
+                      <span class="stat-box-val-text">1</span>
+                      <span class="stat-box-label-text">Max Streak</span>
+                    </div>
+                    <div class="stat-box-icon-right" style="background: rgba(255, 210, 63, 0.15); color: #FFD23F;">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Total XP -->
+                  <div class="stat-overview-box">
+                    <div class="stat-box-left-content">
+                      <span class="stat-box-val-text" id="stat-total-xp">20</span>
+                      <span class="stat-box-label-text">Total XP</span>
+                    </div>
+                    <div class="stat-box-icon-right" style="background: rgba(80, 209, 224, 0.15); color: #50D1E0;">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- League -->
+                  <div class="stat-overview-box">
+                    <div class="stat-box-left-content">
+                      <span class="stat-box-val-text">-</span>
+                      <span class="stat-box-label-text">League</span>
+                    </div>
+                    <div class="stat-box-icon-right"
+                      style="background: rgba(82, 81, 110, 0.08); color: var(--text-primary);">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Total Games -->
+                  <div class="stat-overview-box">
+                    <div class="stat-box-left-content">
+                      <span class="stat-box-val-text">2</span>
+                      <span class="stat-box-label-text">Total Games</span>
+                    </div>
+                    <div class="stat-box-icon-right" style="background: rgba(69, 100, 198, 0.15); color: #4564C6;">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="3" />
+                        <path d="M6 12h4" />
+                        <path d="M8 10v4" />
+                        <circle cx="15" cy="11" r="1" />
+                        <circle cx="18" cy="13" r="1" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- XP Gained this Week Card -->
+              <div class="profile-section-card">
+                <div class="section-header-row">
+                  <h3 class="section-header-title">XP Gained this Week</h3>
+                </div>
+
+                <div class="xp-week-empty-card">
+                  No XP earned this week yet.
+                </div>
+              </div>
+
             </div>
           </div>
-
-        </div>
-
-        <!-- Sidebar Column (Right side) -->
-        <div class="profile-side-column">
-          
-          <!-- Math Rank Emblem Card -->
-          <div class="profile-section-card">
-            <div class="rank-card-header">
-              <select class="rank-dropdown-custom">
-                <option>⚙️ Math Rank</option>
-                <option>⚙️ Logic Rank</option>
-                <option>⚙️ Memory Rank</option>
-                <option>⚙️ Puzzle Rank</option>
-              </select>
-              <button class="green-arrow-btn">➔</button>
-            </div>
-            
-            <div class="rank-emblem-section">
-              <div class="rank-emblem-shield-outer">
-                <div class="rank-emblem-shield-inner">
-                  <div class="rank-emblem-center-diamond"></div>
-                </div>
-              </div>
-              <span class="rank-emblem-label">NOVICE</span>
-            </div>
-            
-            <div class="rank-rating-bar-container">
-              <div class="rank-rating-bar-track">
-                <div class="rank-rating-bar-fill" style="width: <%= (user && user.ratings) ? (user.ratings.math / 1200 * 100) : 83.3 %>%;"></div>
-              </div>
-              <div class="d-flex justify-content-between w-100 mt-1" style="font-size: 11px; font-weight: 700; color: var(--text-primary); opacity: 0.85;">
-                <span>RANK RATING</span>
-                <span id="rank-rating-fraction-text"><%= (user && user.ratings) ? user.ratings.math : 1000 %>/1200</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Stats Overview Card -->
-          <div class="profile-section-card">
-            <div class="section-header-row">
-              <h3 class="section-header-title">Stats Overview</h3>
-            </div>
-            
-            <div class="stats-overview-grid">
-              <!-- Max Streak -->
-              <div class="stat-overview-box">
-                <div class="stat-box-left-content">
-                  <span class="stat-box-val-text">1</span>
-                  <span class="stat-box-label-text">Max Streak</span>
-                </div>
-                <div class="stat-box-icon-right" style="background: rgba(255, 210, 63, 0.15); color: #FFD23F;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                </div>
-              </div>
-              
-              <!-- Total XP -->
-              <div class="stat-overview-box">
-                <div class="stat-box-left-content">
-                  <span class="stat-box-val-text" id="stat-total-xp">20</span>
-                  <span class="stat-box-label-text">Total XP</span>
-                </div>
-                <div class="stat-box-icon-right" style="background: rgba(80, 209, 224, 0.15); color: #50D1E0;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-              </div>
-
-              <!-- League -->
-              <div class="stat-overview-box">
-                <div class="stat-box-left-content">
-                  <span class="stat-box-val-text">-</span>
-                  <span class="stat-box-label-text">League</span>
-                </div>
-                <div class="stat-box-icon-right" style="background: rgba(82, 81, 110, 0.08); color: var(--text-primary);">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-              </div>
-
-              <!-- Total Games -->
-              <div class="stat-overview-box">
-                <div class="stat-box-left-content">
-                  <span class="stat-box-val-text">2</span>
-                  <span class="stat-box-label-text">Total Games</span>
-                </div>
-                <div class="stat-box-icon-right" style="background: rgba(69, 100, 198, 0.15); color: #4564C6;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- XP Gained this Week Card -->
-          <div class="profile-section-card">
-            <div class="section-header-row">
-              <h3 class="section-header-title">XP Gained this Week</h3>
-            </div>
-            
-            <div class="xp-week-empty-card">
-              No XP earned this week yet.
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </main>
+      </main>
   </div>
 
   <!-- Dynamic Profile loading script -->
@@ -451,7 +623,7 @@
       const defVal = (currentCollegeText === 'Add College') ? '' : currentCollegeText;
       const collegeName = prompt("Enter your College name:", defVal);
       if (collegeName === null) return;
-      
+
       try {
         const res = await fetch('/api/user/stats', {
           method: 'PUT',
@@ -470,7 +642,7 @@
     async function promptAddSocials() {
       const link = prompt("Enter your socials profile link (e.g. LinkedIn, GitHub, Twitter):");
       if (link === null) return;
-      
+
       try {
         const res = await fetch('/api/user/stats', {
           method: 'PUT',
@@ -501,12 +673,12 @@
     function updateSocialsUI(socials) {
       const pillsContainer = document.getElementById('profile-meta-pills');
       if (!pillsContainer) return;
-      
+
       const existingSocial = document.getElementById('socials-btn');
       if (existingSocial) {
         existingSocial.remove();
       }
-      
+
       if (socials) {
         let platform = 'generic';
         let linkText = socials;
@@ -515,7 +687,7 @@
         else if (lowerLink.includes('github')) platform = 'github';
         else if (lowerLink.includes('twitter') || lowerLink.includes('x.com')) platform = 'twitter';
         else if (lowerLink.includes('instagram')) platform = 'instagram';
-        
+
         try {
           let cleanUrl = socials.replace(/^(https?:\/\/)?(www\.)?/, '');
           let parts = cleanUrl.split('/');
@@ -524,8 +696,8 @@
             linkText = namePart;
             if (linkText.length > 15) linkText = linkText.substring(0, 12) + '...';
           }
-        } catch(e) {}
-        
+        } catch (e) { }
+
         let html = '';
         if (platform === 'linkedin') {
           html = `
@@ -587,7 +759,7 @@
     function renderGameLogsUI(logs, user) {
       const container = document.getElementById('game-log-list-container');
       if (!container) return;
-      
+
       container.innerHTML = '';
       if (!logs || logs.length === 0) {
         container.innerHTML = `
@@ -601,14 +773,14 @@
       logs.forEach(log => {
         const date = log.playedAt ? new Date(log.playedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : '14th Jul';
         const time = log.playedAt ? new Date(log.playedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '08:09 PM';
-        
+
         const isWinner = log.playerScore >= log.opponentScore;
         const isOpponentWinner = log.opponentScore > log.playerScore;
-        
+
         // Handle nested/populated challenge object
         const modeTitle = log.challenge && log.challenge.title ? log.challenge.title : (log.mode || 'Sprint Duels');
         const categoryVal = log.challenge && log.challenge.category ? log.challenge.category : (log.category || 'Math');
-        
+
         const html = `
           <div class="game-log-entry-card" data-category="${categoryVal}">
             <div class="game-log-header-text">
@@ -648,7 +820,7 @@
         `;
         container.insertAdjacentHTML('beforeend', html);
       });
-      
+
       // Filter current active tab after rendering
       filterLogsByActiveTab();
     }
@@ -656,10 +828,10 @@
     function filterLogsByActiveTab() {
       const activeTab = document.querySelector('#game-tabs-row .game-tab-item.active');
       if (!activeTab) return;
-      
+
       const filter = activeTab.getAttribute('data-filter');
       const entries = document.querySelectorAll('#game-log-list-container .game-log-entry-card');
-      
+
       let visibleCount = 0;
       entries.forEach(entry => {
         const category = entry.getAttribute('data-category');
@@ -670,10 +842,10 @@
           entry.style.display = 'none';
         }
       });
-      
+
       const existingNoData = document.getElementById('no-game-logs-message');
       if (existingNoData) existingNoData.remove();
-      
+
       if (visibleCount === 0 && entries.length > 0) {
         const msgHtml = `
           <div class="game-log-entry-card text-center" id="no-game-logs-message" style="padding: 24px;">
@@ -699,7 +871,7 @@
         const res = await fetch('/api/user/profile');
         if (res.ok) {
           const user = await res.json();
-          
+
           // Update profile fields
           const avatarInitial = user.name ? user.name.charAt(0) : 'J';
           const profileAvatarLarge = document.getElementById('profile-avatar-large');
@@ -708,22 +880,22 @@
           if (profileMainName) profileMainName.textContent = user.name;
           const profileMainUsername = document.getElementById('profile-main-username');
           if (profileMainUsername) profileMainUsername.textContent = `@${user.username}`;
-          
+
           // Update College & Socials UI
           updateCollegeUI(user.collage);
           updateSocialsUI(user.socials);
-          
+
           // Render game logs history
           if (user.gameLogs && user.gameLogs.length > 0) {
             renderGameLogsUI(user.gameLogs, user);
           } else {
             filterLogsByActiveTab();
           }
-          
+
           // Update stats values
           const statTotalXp = document.getElementById('stat-total-xp');
           if (statTotalXp) statTotalXp.textContent = user.xp;
-          
+
           // Math rank rating alignment
           const mathRating = user.ratings ? user.ratings.math : 1000;
           const rankRatingFractionText = document.getElementById('rank-rating-fraction-text');
@@ -739,11 +911,11 @@
             if (memoryVal) memoryVal.textContent = user.ratings.memory;
             const puzzleVal = document.getElementById('rating-puzzle-val');
             if (puzzleVal) puzzleVal.textContent = user.ratings.puzzle;
-            
+
             const fill = document.querySelector('.rank-rating-bar-fill');
             if (fill) fill.style.width = `${(user.ratings.math / 1200) * 100}%`;
           }
-          
+
           // Update sidebar elements too if they are loaded later
           const sidebarName = document.getElementById('user-profile-name');
           const sidebarUsername = document.getElementById('user-profile-username');
@@ -799,9 +971,9 @@
         const file = files[0];
         if (file && file.type.startsWith('image/')) {
           const reader = new FileReader();
-          reader.onload = function(event) {
+          reader.onload = function (event) {
             const img = new Image();
-            img.onload = function() {
+            img.onload = function () {
               const canvas = document.createElement('canvas');
               const maxDim = 256;
               let width = img.width;
@@ -873,7 +1045,7 @@
           // Reload profile elements dynamically
           document.getElementById('profile-main-name').textContent = updatedUser.name;
           document.getElementById('profile-main-username').textContent = `@${updatedUser.username}`;
-          
+
           const profileAvatarLarge = document.getElementById('profile-avatar-large');
           const editAvatarChar = document.getElementById('edit-avatar-char');
           const sidebarAvatar = document.getElementById('user-avatar-initial');
@@ -968,10 +1140,10 @@
           }
 
           // 2. Check dragged web image URLs or Data URIs
-          const imageUrl = e.dataTransfer.getData('text/uri-list') || 
-                           e.dataTransfer.getData('URL') || 
-                           e.dataTransfer.getData('text/plain');
-                           
+          const imageUrl = e.dataTransfer.getData('text/uri-list') ||
+            e.dataTransfer.getData('URL') ||
+            e.dataTransfer.getData('text/plain');
+
           if (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('data:image'))) {
             setAvatarPreview(imageUrl);
             return;
@@ -997,21 +1169,24 @@
     <div class="edit-profile-box">
       <button class="edit-profile-close-btn" onclick="closeEditProfileModal()">×</button>
       <h2 class="edit-profile-title">Edit Profile</h2>
-      
+
       <div class="edit-avatar-section" id="edit-avatar-drop-zone">
-        <div class="edit-avatar-circle" id="edit-avatar-char" style="<%= (user && user.avatarUrl) ? 'background-image: url(' + user.avatarUrl + '); background-size: cover; background-position: center; color: transparent;' : '' %>">
-          <%= (user && user.avatarUrl) ? '' : (user ? user.name.charAt(0) : 'J') %>
+        <div class="edit-avatar-circle" id="edit-avatar-char"
+          style="<%= (user && user.avatarUrl) ? 'background-image: url(' + user.avatarUrl + '); background-size: cover; background-position: center; color: transparent;' : '' %>">
+          <%= (user && user.avatarUrl) ? '' : (user ? user.name.charAt(0) : 'J' ) %>
         </div>
         <div class="edit-avatar-pencil-badge" onclick="document.getElementById('avatar-file-input').click()">✏️</div>
-        <input type="file" id="avatar-file-input" style="display: none;" accept="image/*" onchange="handleAvatarFileSelect(this.files)">
+        <input type="file" id="avatar-file-input" style="display: none;" accept="image/*"
+          onchange="handleAvatarFileSelect(this.files)">
       </div>
 
       <form id="edit-profile-form" onsubmit="handleProfileSave(event)">
         <span class="form-section-title">USER INTRO</span>
-        
+
         <div class="form-input-wrapper">
           <label class="form-input-label">User Name *</label>
-          <input type="text" class="form-input-field" id="edit-username-val" value="<%= user ? user.username : '' %>" required>
+          <input type="text" class="form-input-field" id="edit-username-val" value="<%= user ? user.username : '' %>"
+            required>
         </div>
 
         <div class="form-input-wrapper">
@@ -1022,27 +1197,32 @@
         <div class="form-input-wrapper">
           <label class="form-input-label">Country *</label>
           <select class="form-input-field select-field" id="edit-country-val">
-            <option value="India" <%= (user && user.country === 'India') ? 'selected' : '' %>>India</option>
-            <option value="United States" <%= (user && user.country === 'United States') ? 'selected' : '' %>>United States</option>
-            <option value="United Kingdom" <%= (user && user.country === 'United Kingdom') ? 'selected' : '' %>>United Kingdom</option>
-            <option value="Canada" <%= (user && user.country === 'Canada') ? 'selected' : '' %>>Canada</option>
-            <option value="Australia" <%= (user && user.country === 'Australia') ? 'selected' : '' %>>Australia</option>
+            <option value="India" <%=(user && user.country==='India' ) ? 'selected' : '' %>>India</option>
+            <option value="United States" <%=(user && user.country==='United States' ) ? 'selected' : '' %>>United
+              States</option>
+            <option value="United Kingdom" <%=(user && user.country==='United Kingdom' ) ? 'selected' : '' %>>United
+              Kingdom</option>
+            <option value="Canada" <%=(user && user.country==='Canada' ) ? 'selected' : '' %>>Canada</option>
+            <option value="Australia" <%=(user && user.country==='Australia' ) ? 'selected' : '' %>>Australia</option>
           </select>
         </div>
 
         <div class="form-input-wrapper">
           <label class="form-input-label">Your Bio</label>
-          <textarea class="form-input-field textarea-field" id="edit-bio-val" placeholder="Enter Your Bio (Optional)"><%= (user && user.bio) ? user.bio : '' %></textarea>
+          <textarea class="form-input-field textarea-field" id="edit-bio-val"
+            placeholder="Enter Your Bio (Optional)"><%= (user && user.bio) ? user.bio : '' %></textarea>
         </div>
 
         <div class="form-input-wrapper">
           <label class="form-input-label">Socials Link</label>
-          <input type="text" class="form-input-field" id="edit-socials-val" value="<%= user ? user.socials : '' %>" placeholder="e.g. https://github.com/username">
+          <input type="text" class="form-input-field" id="edit-socials-val" value="<%= user ? user.socials : '' %>"
+            placeholder="e.g. https://github.com/username">
         </div>
 
         <div class="awards-section-header">
           <span class="form-section-title">AWARDS & ACHIEVEMENTS</span>
-          <button type="button" class="add-award-btn" onclick="alert('Awards & Achievements are linked to competitive rankings!')">Add +</button>
+          <button type="button" class="add-award-btn"
+            onclick="alert('Awards & Achievements are linked to competitive rankings!')">Add +</button>
         </div>
 
         <button type="submit" class="profile-save-submit-btn">
@@ -1053,4 +1233,5 @@
   </div>
 
 </body>
+
 </html>
