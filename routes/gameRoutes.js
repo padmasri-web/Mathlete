@@ -11,4 +11,9 @@ router.get(['/sudoku', '/games/sudoku', '/sudoko', '/games/sudoko'], (req, res) 
   res.render('games/sudoku');
 });
 
+// Route to render the 2048 game view
+router.get(['/2048', '/games/2048'], (req, res) => {
+  res.render('games/2048');
+});
+
 module.exports = router;
