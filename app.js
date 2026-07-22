@@ -19,6 +19,7 @@ const memoryMathRoutes = require('./routes/MemoryMathRoutes');
 const snakeGameRoutes = require('./routes/snakeGameRoutes');
 const authRoutes = require('./routes/authRoutes');
 const friendRoutes = require('./routes/friendRoutes');
+const ticTacToeRoutes = require('./routes/tic-tac-toe_Routes');
 
 // Import models for seeding
 const User = require('./models/Profile');
@@ -276,6 +277,7 @@ app.get('/games/logic', ensureAuthenticated, (req, res) => {
 
 app.use('/games/memorymath', ensureAuthenticated, memoryMathRoutes);
 app.use('/', ensureAuthenticated, snakeGameRoutes);
+app.use('/', ensureAuthenticated, ticTacToeRoutes);
 
 // Fallback to home page
 app.get('/{*splat}', (req, res) => {
