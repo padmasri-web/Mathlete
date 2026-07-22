@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render Quests list
   function renderQuests(quests) {
+    if (!questsRenderList) return;
     questsRenderList.innerHTML = '';
 
     // Sort quests so active are first, completed last
