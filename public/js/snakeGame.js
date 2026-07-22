@@ -241,6 +241,23 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Could not save stats to server:", err);
       }
     }
+
+    // Always log played match details in the database history
+    try {
+      await fetch('/api/user/gamelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: 'Logic',
+          mode: 'Snake',
+          playerScore: score,
+          opponentName: 'AI Snake Bot',
+          opponentScore: Math.max(0, Math.floor(score * 0.8 + (Math.random() - 0.5) * 6))
+        })
+      });
+    } catch (err) {
+      console.warn("Could not save match history gamelog to server:", err);
+    }
   }
 
   // Draw board

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matiks - Turn Screen Time Into Smart Time</title>
+  <meta name="description" content="Play fast mental duels against real players. Turn screen time into smart time on Matiks.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  
+  <style>
+    /* Premium Landing page styling using ONLY #f42f76, #f58db4, and light shades. No dark colors. */
+    :root {
+      --bg-hot-pink: #f42f76;
+      --bg-soft-pink: #f58db4;
+      --bg-light-white: rgba(255, 255, 255, 0.12);
+      --bg-solid-white: #ffffff;
+      --glass-border: rgba(255, 255, 255, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--bg-hot-pink) 0%, var(--bg-soft-pink) 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Grid overlay to match the grid background in Image 1 */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Top Navigation bar */
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 8%;
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    .brand-logo-text {
+      font-size: 26px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-logo-text svg {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 4;
+    }
+
+    .nav-links-middle {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-links-middle a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-links-middle a:hover {
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-btn-right {
+      background: #111827;
+      border: 2.5px solid #93f560;
+      color: #ffffff;
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      box-shadow: 0px 3px 0px #93f560;
+      transition: all 0.1s ease;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .nav-btn-right:hover {
+      transform: translateY(1px);
+      box-shadow: 0px 2px 0px #93f560;
+    }
+
+    .nav-btn-right:active {
+      transform: translateY(3px);
+      box-shadow: 0px 0px 0px #93f560;
+    }
+
+    /* Hero section block */
+    .hero-main-container {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 8% 40px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .hero-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 60px;
+    }
+
+    .hero-left-phone-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Mobile iPhone frame mockup - light shades */
+    .phone-mockup-frame {
+      width: 280px;
+      height: 570px;
+      border-radius: 40px;
+      background: #ffffff;
+      border: 10px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 25px 50px -12px rgba(244, 47, 118, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Notch */
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 0 0 15px 15px;
+      z-index: 10;
+    }
+
+    /* iPhone Screen contents mock matching Matiks game screen */
+    .phone-mockup-screen {
+      flex-grow: 1;
+      background: #fff5f8;
+      padding: 40px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .phone-game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .game-score-badge {
+      background: rgba(244, 47, 118, 0.1);
+      border: 1px solid rgba(244, 47, 118, 0.2);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bg-hot-pink);
+    }
+
+    .game-target-goal-box {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .game-target-goal-title {
+      font-size: 10px;
+      color: rgba(244, 47, 118, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .game-target-goal-val {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--bg-hot-pink);
+      line-height: 1;
+      margin-top: 4px;
+    }
+
+    .phone-keys-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+
+    .phone-game-key-btn {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(244, 47, 118, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--bg-hot-pink);
+      box-shadow: 0 4px 6px rgba(244, 47, 118, 0.05);
+    }
+
+    .phone-game-key-btn.operator {
+      background: rgba(245, 141, 180, 0.25);
+      color: #d21b58;
+    }
+
+    .phone-game-key-btn.submit {
+      background: var(--bg-hot-pink);
+      color: #fff;
+      border-color: var(--bg-hot-pink);
+    }
+
+    /* Mascot overlay */
+    .phone-mascot-img {
+      position: absolute;
+      bottom: -15px;
+      right: -55px;
+      width: 130px;
+      height: auto;
+      z-index: 12;
+      filter: drop-shadow(0px 8px 16px rgba(244,47,118,0.2));
+    }
+
+    /* Hero Text right side */
+    .hero-right-text-side {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-main-title {
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .neon-green {
+      color: #93f560;
+    }
+
+    .hero-subtitle-desc {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.95);
+      margin-top: 24px;
+      max-width: 480px;
+      font-weight: 500;
+    }
+
+    .hero-action-btn-large {
+      background: #111827;
+      border: 2.5px solid #93f560;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 16px 40px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 40px;
+      width: fit-content;
+      box-shadow: 0px 5px 0px #93f560;
+      transition: all 0.1s ease;
+      cursor: pointer;
+      outline: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-action-btn-large:hover {
+      transform: translateY(1px);
+      box-shadow: 0px 4px 0px #93f560;
+    }
+
+    .hero-action-btn-large:active {
+      transform: translateY(4px);
+      box-shadow: 0px 1px 0px #93f560;
+    }
+
+    /* Modals Overlay Base (Using Hot/Soft Pink styles) */
+    .modal-auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(244, 47, 118, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-auth-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-auth-box {
+      width: 420px;
+      background: linear-gradient(135deg, var(--bg-hot-pink) 0%, var(--bg-soft-pink) 100%);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 28px;
+      padding: 36px 30px;
+      box-shadow: 0 30px 60px rgba(244, 47, 118, 0.4), 0 0 30px rgba(255, 255, 255, 0.2);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      color: #ffffff;
+    }
+
+    .modal-auth-overlay.active .modal-auth-box {
+      transform: scale(1);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .modal-title-text {
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .modal-subtitle-text {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+      margin-bottom: 24px;
+    }
+
+    /* Modal Form / Agreement Checkbox */
+    .checkbox-agree-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      color: #ffffff;
+      cursor: pointer;
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+
+    .checkbox-agree-label input {
+      margin-top: 2px;
+      accent-color: var(--bg-hot-pink);
+    }
+
+    .checkbox-agree-label a {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .modal-solid-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      background: #111827;
+      border: 2.5px solid #93f560;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      transition: all 0.1s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0px 4px 0px #93f560;
+      outline: none;
+    }
+
+    .modal-solid-btn:hover {
+      transform: translateY(1px);
+      box-shadow: 0px 3px 0px #93f560;
+    }
+
+    .modal-solid-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0px 1px 0px #93f560;
+    }
+
+    .modal-outline-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      background: #111827;
+      border: 2.5px solid #F58DB4;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-top: 12px;
+      transition: all 0.1s ease;
+      cursor: pointer;
+      box-shadow: 0px 4px 0px #F58DB4;
+      outline: none;
+    }
+
+    .modal-outline-btn:hover {
+      transform: translateY(1px);
+      box-shadow: 0px 3px 0px #F58DB4;
+    }
+
+    .modal-outline-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0px 1px 0px #F58DB4;
+    }
+
+    /* Form Fields for Authentication Form (Step 3) */
+    .auth-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      width: 100%;
+    }
+
+    .auth-input-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .auth-input-field::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .auth-input-field:focus {
+      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Tabs for Login / Register toggle inside Form */
+    .auth-tabs-row {
+      display: flex;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .auth-tab-btn.active {
+      background: #ffffff;
+      color: var(--bg-hot-pink);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation top bar -->
+  <header class="nav-container">
+    <div class="brand-logo-text">
+      <svg viewBox="0 0 100 50" width="36" height="24">
+        <path d="M 20 15 C 28 15, 32 35, 40 35 C 48 35, 52 15, 40 15 C 32 15, 28 35, 20 35 C 12 35, 8 15, 20 15 Z" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      MATIKS
+    </div>
+    
+    <nav class="nav-links-middle">
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Blogs</a>
+    </nav>
+    
+    <button class="nav-btn-right" onclick="openBrowserModal()">Play On Desktop</button>
+  </header>
+
+  <!-- Hero Main content -->
+  <main class="hero-main-container">
+    <div class="hero-row">
+      
+      <!-- Phone mockup frame left side -->
+      <div class="hero-left-phone-side">
+        <div class="phone-mockup-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-mockup-screen">
+            
+            <div class="phone-game-header">
+              <span class="game-score-badge">🏆 Level 1</span>
+              <span class="game-score-badge">⏱️ 0:45</span>
+            </div>
+
+            <div class="game-target-goal-box">
+              <span class="game-target-goal-title">Target Goal</span>
+              <div class="game-target-goal-val">6</div>
+            </div>
+
+            <div class="phone-keys-grid">
+              <button class="phone-game-key-btn">9</button>
+              <button class="phone-game-key-btn operator">/</button>
+              <button class="phone-game-key-btn">5</button>
+              
+              <button class="phone-game-key-btn operator">×</button>
+              <button class="phone-game-key-btn">3</button>
+              <button class="phone-game-key-btn operator">+</button>
+              
+              <button class="phone-game-key-btn">3</button>
+              <button class="phone-game-key-btn operator">×</button>
+              <button class="phone-game-key-btn">2</button>
+            </div>
+            
+          </div>
+        </div>
+        
+        <!-- Phone Mascot Purple Dude -->
+        <svg class="phone-mascot-img" viewBox="0 0 100 100">
+          <rect x="25" y="30" width="50" height="40" rx="10" fill="#ffffff" />
+          <rect x="35" y="45" width="10" height="4" fill="#f42f76" />
+          <rect x="55" y="45" width="10" height="4" fill="#f42f76" />
+          <rect x="43" y="58" width="14" height="3" fill="#f42f76" />
+          <path d="M45 70 L40 85 M55 70 L60 85" stroke="#ffffff" stroke-width="8" stroke-linecap="round" />
+          <circle cx="50" cy="20" r="4" fill="#ffffff" />
+        </svg>
+      </div>
+
+      <!-- Hero Text Column right side -->
+      <div class="hero-right-text-side">
+        <h1 class="hero-main-title">
+          Turn Screen<br>
+          Time Into<br>
+          <span class="neon-green">Smart Time</span>
+        </h1>
+        <p class="hero-subtitle-desc">
+          Fast mental duels against real players. Solve logic, math, and memory duels to test your speed.
+        </p>
+        
+        <button class="hero-action-btn-large" onclick="openBrowserModal()">
+          Play on desktop
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Image 2 Form Modal: Browser Choice -->
+  <div class="modal-auth-overlay" id="browser-modal">
+    <div class="modal-auth-box">
+      <button class="modal-close-btn" onclick="closeBrowserModal()">×</button>
+      <h2 class="modal-title-text">Matiks On Browser</h2>
+      <p class="modal-subtitle-text">Our best experience is on mobile</p>
+      
+      <label class="checkbox-agree-label">
+        <input type="checkbox" id="terms-checkbox" checked>
+        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+      </label>
+
+      <button class="modal-solid-btn" onclick="openAuthModal('signup')">
+        Get Started
+      </button>
+      <button class="modal-outline-btn" onclick="openAuthModal('login')">
+        I already have an account
+      </button>
+    </div>
+  </div>
+
+  <!-- Image 3 Form Modal: Authentication (Login / Registration) -->
+  <div class="modal-auth-overlay" id="auth-modal">
+    <div class="modal-auth-box">
+      <button class="modal-close-btn" onclick="closeAuthModal()">×</button>
+      
+      <h2 class="modal-title-text" id="auth-modal-title">Login To Matiks</h2>
+      <p class="modal-subtitle-text" id="auth-modal-subtitle">Continue with username & password</p>
+
+      <div class="auth-tabs-row">
+        <button class="auth-tab-btn active" id="tab-login" onclick="toggleAuthTab('login')">Log In</button>
+        <button class="auth-tab-btn" id="tab-signup" onclick="toggleAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Error message box -->
+      <div class="alert-error" id="auth-error-alert" style="display: none;"></div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <!-- Hidden method input or action state -->
+        <input type="hidden" id="auth-action-type" value="login">
+
+        <!-- Name (only for Registration) -->
+        <div class="auth-input-group" id="reg-name-group" style="display: none;">
+          <label class="auth-input-label" for="auth-name">Full Name</label>
+          <input type="text" class="auth-input-field" id="auth-name" placeholder="Joseph Fox">
+        </div>
+
+        <!-- Username -->
+        <div class="auth-input-group">
+          <label class="auth-input-label" for="auth-username">Username</label>
+          <input type="text" class="auth-input-field" id="auth-username" required placeholder="joe_fox">
+        </div>
+
+        <!-- Password -->
+        <div class="auth-input-group">
+          <label class="auth-input-label" for="auth-password">Password</label>
+          <input type="password" class="auth-input-field" id="auth-password" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="modal-solid-btn mt-3" id="auth-submit-btn">
+          Continue
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const browserModal = document.getElementById('browser-modal');
+    const authModal = document.getElementById('auth-modal');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+
+    function openBrowserModal() {
+      browserModal.classList.add('active');
+    }
+
+    function closeBrowserModal() {
+      browserModal.classList.remove('active');
+    }
+
+    function openAuthModal(mode) {
+      if (!termsCheckbox.checked) {
+        alert("You must agree to the Terms of Service and Privacy Policy to proceed.");
+        return;
+      }
+      closeBrowserModal();
+      authModal.classList.add('active');
+      toggleAuthTab(mode);
+    }
+
+    function closeAuthModal() {
+      authModal.classList.remove('active');
+    }
+
+    function toggleAuthTab(mode) {
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
+      const nameGroup = document.getElementById('reg-name-group');
+      const modalTitle = document.getElementById('auth-modal-title');
+      const actionType = document.getElementById('auth-action-type');
+      const submitBtn = document.getElementById('auth-submit-btn');
+
+      document.getElementById('auth-error-alert').style.display = 'none';
+
+      if (mode === 'login') {
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        nameGroup.style.display = 'none';
+        modalTitle.textContent = 'Login To Matiks';
+        actionType.value = 'login';
+        submitBtn.textContent = 'Continue';
+        document.getElementById('auth-name').removeAttribute('required');
+      } else {
+        tabLogin.classList.remove('active');
+        tabSignup.classList.add('active');
+        nameGroup.style.display = 'flex';
+        modalTitle.textContent = 'Register To Matiks';
+        actionType.value = 'signup';
+        submitBtn.textContent = 'Create Account';
+        document.getElementById('auth-name').setAttribute('required', 'true');
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const action = document.getElementById('auth-action-type').value;
+      const username = document.getElementById('auth-username').value.trim();
+      const password = document.getElementById('auth-password').value.trim();
+      const name = document.getElementById('auth-name').value.trim();
+      
+      const errorAlert = document.getElementById('auth-error-alert');
+      errorAlert.style.display = 'none';
+
+      const url = action === 'login' ? '/auth/login' : '/auth/register';
+      const payload = action === 'login' ? { username, password } : { username, password, name };
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          // Success: redirect to dashboard
+          window.location.href = '/';
+        } else {
+          // Failure: render error message
+          errorAlert.textContent = data.message || 'Authentication failed. Please try again.';
+          errorAlert.style.display = 'block';
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
+        errorAlert.textContent = 'Network error occurred. Please try again.';
+        errorAlert.style.display = 'block';
+      }
+    }
+
+    // Auto-open login form on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      authModal.classList.add('active');
+      toggleAuthTab('login');
+    });
+  </script>
+</body>
+</html>
