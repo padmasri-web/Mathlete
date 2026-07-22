@@ -114,7 +114,7 @@ app.get('/games/lightsout', (req, res) => {
 });
 
 app.get('/games/sudoku', (req, res) => {
-  res.render('games/sudoko');
+  res.render('games/sudoku');
 });
 
 app.get('/games/crossmath', (req, res) => {

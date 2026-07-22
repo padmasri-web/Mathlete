@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn = document.getElementById('reset-btn');
   const winModalEl = document.getElementById('winModal');
   const gameOverModalEl = document.getElementById('gameOverModal');
-  const timerTextEl = document.getElementById('timer-text');
+  const timerTextEl = document.getElementById('game-timer') || document.getElementById('timer-text');
   const timerToggleEl = document.getElementById('timer-toggle');
   const GRID_SIZE = 5;
   const GAME_DURATION = 120; // 2 minutes in seconds
@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Grid container layout styling
     gameBoard.style.display = 'grid';
     gameBoard.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
-    gameBoard.style.gap = '6px';
-    gameBoard.style.maxWidth = '260px';
+    gameBoard.style.gap = '10px';
+    gameBoard.style.maxWidth = '420px';
     gameBoard.style.margin = '0 auto';
 
     for (let row = 0; row < GRID_SIZE; row++) {
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalResetBtn.addEventListener('click', startFreshGame);
   }
 
-  const gameOverResetBtn = document.getElementById('game-over-reset-btn');
+  const gameOverResetBtn = document.getElementById('modal-gameover-reset-btn') || document.getElementById('game-over-reset-btn');
   if (gameOverResetBtn) {
     gameOverResetBtn.addEventListener('click', startFreshGame);
   }

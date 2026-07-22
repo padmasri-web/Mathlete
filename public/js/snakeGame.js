@@ -5,9 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const highScoreText = document.getElementById('high-score-text');
   const restartBtn = document.getElementById('restart-btn');
 
-  // Grid parameters
+  // Modal elements
+  const gameOverModalEl = document.getElementById('gameOverModal');
+  const modalRestartBtn = document.getElementById('modal-restart-btn');
+  const modalFinalScore = document.getElementById('modal-final-score');
+  const modalHighScore = document.getElementById('modal-high-score');
+  const modalRewardsText = document.getElementById('modal-rewards-text');
+
+  // Grid parameters (Widescreen 600x400)
   const GRID_SIZE = 20; // 20px per cell
-  const TILE_COUNT = 20; // 20x20 cells on a 400x400 canvas
+  const TILE_COUNT_X = 30; // 30 cols = 600px width
+  const TILE_COUNT_Y = 20; // 20 rows = 400px height
 
   // Game state
   let snake = [];
@@ -44,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize/Reset Game
   function initGame() {
     snake = [
-      { x: 10, y: 10 },
-      { x: 9, y: 10 },
-      { x: 8, y: 10 }
+      { x: 15, y: 10 },
+      { x: 14, y: 10 },
+      { x: 13, y: 10 }
     ];
     dx = 1;
     dy = 0;
@@ -66,8 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let foodOnSnake = true;
     
     while (foodOnSnake) {
-      foodX = Math.floor(Math.random() * TILE_COUNT);
-      foodY = Math.floor(Math.random() * TILE_COUNT);
+      foodX = Math.floor(Math.random() * TILE_COUNT_X);
+      foodY = Math.floor(Math.random() * TILE_COUNT_Y);
       
       foodOnSnake = false;
       for (let i = 0; i < snake.length; i++) {
@@ -87,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restart on space
     if (e.code === 'Space' && isGameOver) {
       e.preventDefault();
+      // Dismiss modal if open
+      if (gameOverModalEl && typeof bootstrap !== 'undefined') {
+        const modalInstance = bootstrap.Modal.getInstance(gameOverModalEl);
+        if (modalInstance) modalInstance.hide();
+      }
       initGame();
       return;
     }
@@ -171,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const head = snake[0];
 
     // Boundary check
-    if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) {
+    if (head.x < 0 || head.x >= TILE_COUNT_X || head.y < 0 || head.y >= TILE_COUNT_Y) {
       isGameOver = true;
       return;
     }
@@ -192,6 +205,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reward player: 1 Coin + 1 XP per 10 points
     const coinReward = Math.floor(score / 10);
     const xpReward = Math.floor(score / 10);
+
+    // Update Modal text
+    if (modalFinalScore) modalFinalScore.textContent = score;
+    if (modalHighScore) modalHighScore.textContent = highScore;
+    if (modalRewardsText) {
+      if (coinReward > 0) {
+        modalRewardsText.innerHTML = `Awesome run! Earned <strong>+${coinReward} Coins</strong> and <strong>+${xpReward} XP</strong>.`;
+      } else {
+        modalRewardsText.innerHTML = `Score at least 10 points to start earning Coins & XP!`;
+      }
+    }
+
+    // Show Game Over Modal
+    if (gameOverModalEl && typeof bootstrap !== 'undefined') {
+      const modal = new bootstrap.Modal(gameOverModalEl);
+      modal.show();
+    }
 
     if (coinReward > 0) {
       currentCoins += coinReward;
@@ -222,15 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Draw Grid (Subtle lines)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.lineWidth = 1;
-    for (let i = 0; i <= TILE_COUNT; i++) {
+    for (let i = 0; i <= TILE_COUNT_X; i++) {
       ctx.beginPath();
       ctx.moveTo(i * GRID_SIZE, 0);
       ctx.lineTo(i * GRID_SIZE, canvas.height);
       ctx.stroke();
-
+    }
+    for (let j = 0; j <= TILE_COUNT_Y; j++) {
       ctx.beginPath();
-      ctx.moveTo(0, i * GRID_SIZE);
-      ctx.lineTo(canvas.width, i * GRID_SIZE);
+      ctx.moveTo(0, j * GRID_SIZE);
+      ctx.lineTo(canvas.width, j * GRID_SIZE);
       ctx.stroke();
     }
 
@@ -284,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Eye positions based on movement direction
         let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
-        let pupLeftX, pupLeftY, pupRightX, pupRightY;
 
         if (dx === 1) { // Moving Right
           leftEyeX = x + size - eyeOffset; leftEyeY = y + eyeOffset;
@@ -322,27 +352,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Draw game over screen text
+  // Draw game over screen on canvas (Subtle dark overlay over frozen board)
   function drawGameOver() {
-    ctx.fillStyle = 'rgba(17, 24, 39, 0.85)';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.textAlign = 'center';
-    
-    // Header
-    ctx.fillStyle = '#ef4444';
-    ctx.font = '800 32px var(--font-heading, "Outfit", sans-serif)';
-    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
-
-    // Score
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 20px var(--font-body, sans-serif)';
-    ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 5);
-
-    // Instruction
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = '600 14px var(--font-body, sans-serif)';
-    ctx.fillText('Press SPACE or Restart to Play Again', canvas.width / 2, canvas.height / 2 + 50);
   }
 
   // Rounded rectangle drawing helper
@@ -361,8 +374,9 @@ document.addEventListener('DOMContentLoaded', () => {
     c.fill();
   }
 
-  // Restart button click
-  restartBtn.addEventListener('click', initGame);
+  // Restart button clicks
+  if (restartBtn) restartBtn.addEventListener('click', initGame);
+  if (modalRestartBtn) modalRestartBtn.addEventListener('click', initGame);
 
   // Initialize
   fetchUserStats();
