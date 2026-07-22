@@ -313,7 +313,7 @@
 /* Core Dashboard Layout Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1fr;
+  grid-template-columns: 1fr;
   gap: 30px;
 }
 
