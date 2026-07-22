@@ -354,6 +354,35 @@ document.addEventListener('DOMContentLoaded', () => {
       isSolvedOrRevealed = true;
       stopStopwatch();
       playWinSound();
+
+      // Time-Based Scoring Formula:
+      // Score = max(0, BasePoints - (TimeTakenInSeconds * PenaltyRate) + DifficultyBonus)
+      const timeTakenInSeconds = elapsedSeconds;
+      const diffBonus = currentDifficulty === 'hard' ? 500 : (currentDifficulty === 'medium' ? 250 : 100);
+      const computedScore = Math.max(0, Math.floor(1000 - (timeTakenInSeconds * 2) + diffBonus));
+
+      // Post score and update user DB stats
+      fetch('/api/user/gamelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: 'Puzzle',
+          mode: 'Sudoku',
+          playerScore: computedScore,
+          timeTakenSeconds: timeTakenInSeconds,
+          difficultyBonus: diffBonus,
+          basePoints: 1000,
+          penaltyRate: 2
+        })
+      }).then(res => res.json()).then(data => {
+        if (data.updatedUser) {
+          const xpEl = document.getElementById('xp-count');
+          const coinsEl = document.getElementById('coins-count');
+          if (xpEl) xpEl.textContent = `${data.updatedUser.xp} XP`;
+          if (coinsEl) coinsEl.textContent = data.updatedUser.coins;
+        }
+      }).catch(err => console.warn("Score logging error:", err));
+
       if (winModalEl && typeof bootstrap !== 'undefined') {
         const modal = new bootstrap.Modal(winModalEl);
         modal.show();

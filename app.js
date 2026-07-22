@@ -184,81 +184,94 @@ passport.deserializeUser(async (id, done) => {
 // Serve frontend static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Register Auth & API Routes
-app.use('/auth', authRoutes);
-
 // Session Locals Middleware
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
   next();
 });
 
-app.use('/api/user', userRoutes);
-app.use('/api/challenges', challengeRoutes);
-
-// Register Game & Friend Routes
-app.use('/', gameRoutes);
-app.use('/', friendRoutes);
-
-// Authentication Check Middleware
+// Authentication Check Middlewares
 const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
   res.redirect('/auth');
 };
 
-// View Page Routes
-app.get('/', (req, res) => {
-  if (req.isAuthenticated()) {
-    return res.render('index');
+const ensureGuest = (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return res.redirect('/');
   }
-  res.redirect('/auth');
-});
+  next();
+};
 
-app.get('/auth', (req, res) => {
+// Register Auth Routes (Guest Landing)
+app.use('/auth', authRoutes);
+
+// Unauthenticated /auth redirect check
+app.get('/auth', ensureGuest, (req, res) => {
   res.render('auth/landing');
 });
 
+// Protected API Routes
+app.use('/api/user', ensureAuthenticated, userRoutes);
+app.use('/api/challenges', ensureAuthenticated, challengeRoutes);
+
+// Protected Game & Friend Routes
+app.use('/', ensureAuthenticated, gameRoutes);
+app.use('/', ensureAuthenticated, friendRoutes);
+
+// Protected Dashboard Arena Page Route
+app.get('/', ensureAuthenticated, (req, res) => {
+  res.render('index');
+});
+
+// Protected User Profile Page Route
 app.get('/profile', ensureAuthenticated, async (req, res) => {
   try {
-    const user = req.user || await User.findOne();
-    const lastChallenge = await Challenge.findOne({ mode: "Sprint Duels" }) || { title: "Sprint Duels", category: "Math" };
-    
-    let gameLogs = [];
-    let friendsCount = 0;
-    if (user) {
-      gameLogs = await GameLog.find({ user: user._id })
-        .populate('challenge')
-        .sort({ playedAt: -1 })
-        .limit(2); // Limit to 2 logs on the profile card
-
-      friendsCount = await Friend.countDocuments({
-        $or: [
-          { requester: user._id, status: 'accepted' },
-          { recipient: user._id, status: 'accepted' }
-        ]
-      });
+    const user = req.user;
+    if (!user) {
+      return res.redirect('/auth');
     }
+
+    const lastChallenge = await Challenge.findOne({ mode: "Sprint Duels" }) || { title: "Sprint Duels", category: "Math" };
+    const gameLogs = await GameLog.find({ user: user._id })
+      .populate('challenge')
+      .sort({ playedAt: -1 })
+      .limit(2);
+
+    const friendsCount = await Friend.countDocuments({
+      $or: [
+        { requester: user._id, status: 'accepted' },
+        { recipient: user._id, status: 'accepted' }
+      ]
+    });
     
     res.render('profile', { user, lastChallenge, gameLogs, friendsCount });
   } catch (err) {
     console.warn("Failed to retrieve profile data from MongoDB:", err);
-    res.render('profile', { user: null, lastChallenge: { title: "Sprint Duels", category: "Math" }, gameLogs: [], friendsCount: 0 });
+    res.redirect('/auth');
   }
 });
 
+// Protected Match History Route
 app.get('/profile/history', ensureAuthenticated, async (req, res) => {
   try {
-    const user = req.user || await User.findOne();
-    const gameLogs = user ? await GameLog.find({ user: user._id }).populate('challenge').sort({ playedAt: -1 }) : [];
+    const user = req.user;
+    if (!user) {
+      return res.redirect('/auth');
+    }
+    const gameLogs = await GameLog.find({ user: user._id }).populate('challenge').sort({ playedAt: -1 });
     res.render('history', { user, gameLogs });
   } catch (err) {
     console.warn("Failed to retrieve match history:", err);
-    res.render('history', { user: null, gameLogs: [] });
+    res.redirect('/auth');
   }
 });
 
+// Protected Individual Game Page Routes
 app.get('/games/lightsout', ensureAuthenticated, (req, res) => {
   res.render('games/lightsOut');
 });
@@ -279,7 +292,7 @@ app.use('/games/memorymath', ensureAuthenticated, memoryMathRoutes);
 app.use('/', ensureAuthenticated, snakeGameRoutes);
 app.use('/', ensureAuthenticated, ticTacToeRoutes);
 
-// Fallback to home page
+// Fallback route (redirects to protected home which enforces login)
 app.get('/{*splat}', (req, res) => {
   res.redirect('/');
 });

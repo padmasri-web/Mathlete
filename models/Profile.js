@@ -34,15 +34,35 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  streak: {
+    type: Number,
+    default: 0
+  },
+  lastLoginAt: {
+    type: Date,
+    default: Date.now
+  },
+  isStreakActive: {
+    type: Boolean,
+    default: false
+  },
   xp: {
     type: Number,
     default: 0
   },
+  rankRating: {
+    type: Number,
+    default: 0
+  },
+  badgeTier: {
+    type: String,
+    default: 'NOVICE'
+  },
   ratings: {
-    math: { type: Number, default: 1000 },
-    logic: { type: Number, default: 1000 },
-    memory: { type: Number, default: 1000 },
-    puzzle: { type: Number, default: 1000 }
+    math: { type: Number, default: 0 },
+    logic: { type: Number, default: 0 },
+    memory: { type: Number, default: 0 },
+    puzzle: { type: Number, default: 0 }
   },
   collage: {
     type: String,
