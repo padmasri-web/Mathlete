@@ -1,0 +1,236 @@
+/* Find Friends Page Styling - Matching Matiks Design System */
+
+.find-friends-card {
+  background: var(--card-bg-base, #ffffff);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.4));
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(31, 38, 135, 0.07));
+  padding: 28px;
+  margin-bottom: 40px;
+}
+
+.find-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.find-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.find-back-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: all 0.2s ease;
+}
+
+.find-back-btn:hover {
+  background: #f8fafc;
+  transform: translateX(-2px);
+}
+
+.find-title-heading {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.find-search-wrapper {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.find-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 18px 14px 44px;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.find-search-input:focus {
+  border-color: #85ef47;
+  box-shadow: 0 0 0 3px rgba(133, 239, 71, 0.2);
+}
+
+.find-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.college-pill-btn {
+  background: #ffffff;
+  border: 2px solid #1e293b;
+  color: #1e293b;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  box-shadow: 0 3px 0 #1e293b;
+  transition: all 0.15s ease;
+}
+
+.college-pill-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #1e293b;
+}
+
+.college-pill-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1e293b;
+}
+
+.find-divider-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.find-divider-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.find-divider-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+}
+
+.user-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.user-item-row:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.user-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-item-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #4564C6;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.user-item-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-item-username {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  transition: color 0.2s;
+}
+
+.user-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.user-item-left:hover .user-item-username {
+  color: #f42f76;
+}
+
+/* Action button brutalist pill */
+.find-action-btn {
+  background: #1e293b;
+  border: 2px solid #85ef47;
+  color: #85ef47;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #85ef47;
+  transition: all 0.15s ease;
+}
+
+.find-action-btn:hover {
+  background: #85ef47;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.find-action-btn.withdraw {
+  border-color: #f43f5e;
+  color: #f43f5e;
+  box-shadow: 0 3px 0 #f43f5e;
+}
+
+.find-action-btn.withdraw:hover {
+  background: #f43f5e;
+  color: #ffffff;
+}
+
+.find-action-btn.friends {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  box-shadow: 0 3px 0 #3b82f6;
+}

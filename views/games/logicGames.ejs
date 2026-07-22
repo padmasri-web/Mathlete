@@ -19,9 +19,13 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--card-shadow);
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
       text-align: center;
+    }
+    .game-header {
+      padding: 0 45px;
+      width: 100%;
     }
     .logic-box {
       background: rgba(255, 255, 255, 0.05);
@@ -85,11 +89,10 @@
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content">
+    <main class="main-content" style="padding: 10px 24px; gap: 8px; min-height: 100vh; overflow-y: auto; justify-content: flex-start;">
       <%- include('../dashboard/navbar') %>
 
-      <div style="padding: 24px;">
-        <div class="game-wrapper">
+      <div class="game-wrapper">
           <div class="game-header">
             <h1 style="font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; color: #fff;">Logic Games</h1>
             <p style="color: var(--text-dim); margin-top: 5px;">Solve the logic riddle to earn premium XP rewards!</p>
@@ -112,9 +115,8 @@
             <button class="game-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="window.location.href='/'">Back</button>
           </div>
         </div>
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
 
   <script>
     let selectedIndex = null;

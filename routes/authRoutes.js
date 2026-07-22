@@ -4,6 +4,11 @@ const passport = require('passport');
 const User = require('../models/Profile');
 const crypto = require('crypto');
 
+// Render Auth / Landing Page
+router.get('/', (req, res) => {
+  res.render('auth/landing');
+});
+
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {

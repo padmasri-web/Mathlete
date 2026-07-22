@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+const friendController = require('../controllers/friendController');
+
+// Page Views
+router.get('/friends/find', friendController.renderFindFriends);
+router.get('/profile/user/:username', friendController.renderPublicProfile);
+
+// API Endpoints
+router.post('/api/friends/request', friendController.toggleFriendRequest);
+router.post('/api/friends/accept', friendController.acceptFriendRequest);
+
+module.exports = router;

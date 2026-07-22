@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matiks - Find Friends</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/find.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Fixed Left Navigation Sidebar -->
+    <%- include('../dashboard/leftbar') %>
+
+    <!-- Main Dashboard Content (Offset by 260px) -->
+    <main class="main-content">
+      <!-- Top Navbar with Metrics -->
+      <%- include('../dashboard/navbar') %>
+
+      <!-- Find Friends Main Card -->
+      <div class="find-friends-card">
+        
+        <!-- Header Row -->
+        <div class="find-header-row">
+          <div class="find-header-left">
+            <button class="find-back-btn" onclick="window.location.href='/profile'" title="Back to Profile">
+              ←
+            </button>
+            <h1 class="find-title-heading">Find friends</h1>
+          </div>
+
+          <button class="action-icon-btn" onclick="copyProfileUrl()" title="Share Profile" style="border-radius: 12px; padding: 8px 16px; width: auto; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Share Profile
+          </button>
+        </div>
+
+        <!-- Search Input Box -->
+        <div class="find-search-wrapper">
+          <svg class="find-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="find-search-input" id="user-search-input" placeholder="Search User" value="<%= searchQuery %>" oninput="handleSearchFilter(this.value)">
+        </div>
+
+        <!-- Add College Filter Button -->
+        <button class="college-pill-btn" onclick="promptAddCollegeFilter()">
+          <span>🎓</span> Add College
+        </button>
+
+        <!-- Section Divider -->
+        <div class="find-divider-row">
+          <span class="find-divider-subtitle">Suggested for you</span>
+          <div class="find-divider-line"></div>
+        </div>
+
+        <!-- User List Container -->
+        <div class="user-list-container" id="user-list-container">
+          <% if (suggestedUsers && suggestedUsers.length > 0) { %>
+            <% suggestedUsers.forEach(function(u) { %>
+              <div class="user-item-row" data-username="<%= u.username.toLowerCase() %>" data-name="<%= u.name.toLowerCase() %>">
+                <a href="/profile/user/<%= u.username %>" class="user-item-left">
+                  <div class="user-item-avatar" style="<%= u.avatarUrl ? 'background-image: url(' + u.avatarUrl + '); color: transparent;' : '' %>">
+                    <%= u.avatarUrl ? '' : u.name.charAt(0) %>
+                  </div>
+                  <div class="user-item-meta">
+                    <span class="user-item-username"><%= u.username %></span>
+                    <span class="user-item-name"><%= u.name %></span>
+                  </div>
+                </a>
+
+                <div class="user-item-right">
+                  <% if (u.friendStatus === 'pending_sent') { %>
+                    <button class="find-action-btn withdraw" onclick="toggleFriend('<%= u._id %>', this)">
+                      Withdraw
+                    </button>
+                  <% } else if (u.friendStatus === 'pending_received') { %>
+                    <button class="find-action-btn" onclick="acceptFriend('<%= u._id %>', this)">
+                      Accept
+                    </button>
+                  <% } else if (u.friendStatus === 'friends') { %>
+                    <button class="find-action-btn friends" onclick="toggleFriend('<%= u._id %>', this)">
+                      Friends ✓
+                    </button>
+                  <% } else { %>
+                    <button class="find-action-btn" onclick="toggleFriend('<%= u._id %>', this)">
+                      + Add
+                    </button>
+                  <% } %>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div style="padding: 40px; text-align: center; color: #64748b; font-weight: 600;">
+              No users found.
+            </div>
+          <% } %>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/socket/socketInit.js"></script>
+  <script src="/js/socket/friendEvents.js"></script>
+  <script>
+    function copyProfileUrl() {
+      const url = window.location.origin + '/profile';
+      navigator.clipboard.writeText(url).then(() => {
+        alert("Profile link copied to clipboard!");
+      }).catch(() => {
+        alert("Profile link: " + url);
+      });
+    }
+
+    let searchTimeout = null;
+    function handleSearchFilter(query) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const items = document.querySelectorAll('.user-item-row');
+        const q = query.toLowerCase().trim();
+        items.forEach(item => {
+          const username = item.getAttribute('data-username') || '';
+          const name = item.getAttribute('data-name') || '';
+          if (username.includes(q) || name.includes(q)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }, 150);
+    }
+
+    function promptAddCollegeFilter() {
+      const col = prompt("Enter college filter:");
+      if (col) {
+        document.getElementById('user-search-input').value = col;
+        handleSearchFilter(col);
+      }
+    }
+
+    async function toggleFriend(targetUserId, btn) {
+      try {
+        const res = await fetch('/api/friends/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ targetUserId })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'pending_sent') {
+            btn.className = 'find-action-btn withdraw';
+            btn.textContent = 'Withdraw';
+
+            if (window.socket) {
+              window.socket.emit('send_friend_request', { targetUserId, senderName: '<%= user.username %>' });
+            }
+          } else {
+            btn.className = 'find-action-btn';
+            btn.textContent = '+ Add';
+          }
+        }
+      } catch (err) {
+        console.error("Error toggling friend request:", err);
+      }
+    }
+
+    async function acceptFriend(requesterId, btn) {
+      try {
+        const res = await fetch('/api/friends/accept', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requesterId })
+        });
+        if (res.ok) {
+          btn.className = 'find-action-btn friends';
+          btn.textContent = 'Friends ✓';
+        }
+      } catch (err) {
+        console.error("Error accepting friend request:", err);
+      }
+    }
+  </script>
+</body>
+</html>
