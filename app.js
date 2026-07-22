@@ -18,10 +18,12 @@ const gameRoutes = require('./routes/gameRoutes');
 const memoryMathRoutes = require('./routes/MemoryMathRoutes');
 const snakeGameRoutes = require('./routes/snakeGameRoutes');
 const authRoutes = require('./routes/authRoutes');
+const friendRoutes = require('./routes/friendRoutes');
 
 // Import models for seeding
 const User = require('./models/Profile');
 const { Challenge, GameLog } = require('./models/Challenge');
+const Friend = require('./models/Friend');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -187,8 +189,9 @@ app.use((req, res, next) => {
 app.use('/api/user', userRoutes);
 app.use('/api/challenges', challengeRoutes);
 
-// Register Game Routes
+// Register Game & Friend Routes
 app.use('/', gameRoutes);
+app.use('/', friendRoutes);
 
 // Authentication Check Middleware
 const ensureAuthenticated = (req, res, next) => {
@@ -207,9 +210,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/auth', (req, res) => {
-  if (req.isAuthenticated()) {
-    return res.redirect('/');
-  }
   res.render('auth/landing');
 });
 
@@ -219,17 +219,25 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
     const lastChallenge = await Challenge.findOne({ mode: "Sprint Duels" }) || { title: "Sprint Duels", category: "Math" };
     
     let gameLogs = [];
+    let friendsCount = 0;
     if (user) {
       gameLogs = await GameLog.find({ user: user._id })
         .populate('challenge')
         .sort({ playedAt: -1 })
         .limit(2); // Limit to 2 logs on the profile card
+
+      friendsCount = await Friend.countDocuments({
+        $or: [
+          { requester: user._id, status: 'accepted' },
+          { recipient: user._id, status: 'accepted' }
+        ]
+      });
     }
     
-    res.render('profile', { user, lastChallenge, gameLogs });
+    res.render('profile', { user, lastChallenge, gameLogs, friendsCount });
   } catch (err) {
     console.warn("Failed to retrieve profile data from MongoDB:", err);
-    res.render('profile', { user: null, lastChallenge: { title: "Sprint Duels", category: "Math" }, gameLogs: [] });
+    res.render('profile', { user: null, lastChallenge: { title: "Sprint Duels", category: "Math" }, gameLogs: [], friendsCount: 0 });
   }
 });
 

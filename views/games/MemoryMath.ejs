@@ -38,7 +38,12 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-      max-width: 440px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .game-header {
+      padding: 0 45px;
       width: 100%;
     }
 
@@ -264,7 +269,7 @@
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content">
+    <main class="main-content" style="padding: 10px 24px; gap: 8px; min-height: 100vh; overflow-y: auto; justify-content: flex-start;">
       <%- include('../dashboard/navbar') %>
 
       <section class="memory-game-section">

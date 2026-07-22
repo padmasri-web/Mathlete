@@ -23,15 +23,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      padding: 22px 32px;
+      gap: 10px;
+      padding: 12px 20px;
       background: var(--card-bg, rgba(251, 252, 252, 0.4));
       border: var(--card-border, 1px solid rgba(251, 252, 252, 0.6));
-      border-radius: 24px;
+      border-radius: 20px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--glass-shadow);
-      max-width: 600px;
+      max-width: 500px;
       margin: 0 auto;
       text-align: center;
     }
@@ -39,17 +39,17 @@
     /* Top Left Music Icon Button */
     .music-icon-btn {
       position: absolute;
-      top: 18px;
-      left: 22px;
+      top: 12px;
+      left: 16px;
       background: rgba(255, 255, 255, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.4);
       border-radius: 50%;
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 15px;
       cursor: pointer;
       transition: transform 0.2s, background-color 0.2s, opacity 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -65,41 +65,47 @@
       box-shadow: none;
     }
 
+    .game-header {
+      padding: 0 45px;
+      width: 100%;
+    }
+
     .game-header h1 {
       font-family: var(--font-heading);
       font-weight: 800;
       text-transform: uppercase;
       color: var(--text-primary, #52516E);
-      font-size: 26px;
+      font-size: 22px;
       margin: 0;
     }
 
     .game-header p {
       color: rgba(82, 81, 110, 0.75);
-      font-size: 13.5px;
-      margin-top: 4px;
-      margin-bottom: 4px !important;
+      font-size: 12px;
+      margin-top: 2px;
+      margin-bottom: 2px !important;
     }
 
     .timer-badge {
       background: rgba(244, 47, 118, 0.12);
       color: var(--accent-hot-pink, #F42F76);
-      padding: 6px 18px;
+      padding: 4px 14px;
       border-radius: 50px;
       font-family: var(--font-heading);
       font-weight: 800;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-size: 13px;
       border: 1px solid rgba(244, 47, 118, 0.25);
     }
 
     #game-board {
       width: 100%;
-      max-width: 420px;
-      padding: 14px;
+      max-width: 280px;
+      padding: 8px;
       background: rgba(82, 81, 110, 0.08);
-      border-radius: 22px;
+      border-radius: 18px;
       border: 1px solid rgba(82, 81, 110, 0.1);
     }
 
@@ -168,11 +174,10 @@
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content" style="padding: 15px 30px;">
+    <main class="main-content" style="padding: 10px 24px; gap: 8px; min-height: 100vh; overflow-y: auto; justify-content: flex-start;">
       <%- include('../dashboard/navbar') %>
 
-      <div style="padding: 8px 24px;">
-        <div class="game-wrapper">
+      <div class="game-wrapper">
           <!-- Top Left Music Icon Button -->
           <button id="music-toggle-btn" class="music-icon-btn" title="Toggle Music">🎵</button>
 
@@ -219,9 +224,8 @@
             <button class="game-btn" style="background: rgba(82, 81, 110, 0.1); border: 1px solid rgba(82, 81, 110, 0.2); color: var(--text-primary);" onclick="window.location.href='/'">Back</button>
           </div>
         </div>
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
 
   <!-- Bootstrap 5 Win Modal -->
   <div class="modal fade" id="winModal" tabindex="-1" aria-labelledby="winModalLabel" aria-hidden="true"
