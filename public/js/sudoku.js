@@ -18,6 +18,67 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPaused = false;
   let isSolvedOrRevealed = false;
 
+  const musicToggleBtn = document.getElementById('music-toggle-btn');
+
+  // Audio Controllers (Background, Win, Loss)
+  let isMusicEnabled = true;
+  let bgMusic = new Audio('/assets/mp3/sudoku.mp3');
+  bgMusic.loop = true; // Loops continuously if player stays > 2min 10sec
+  bgMusic.volume = 0.5;
+
+  function playMusic() {
+    if (!isMusicEnabled) return;
+    bgMusic.play().then(() => {
+      if (musicToggleBtn) musicToggleBtn.classList.remove('muted');
+    }).catch(err => {
+      console.warn("Autoplay policy waiting for user interaction:", err);
+    });
+  }
+
+  function pauseMusic() {
+    bgMusic.pause();
+    if (musicToggleBtn) musicToggleBtn.classList.add('muted');
+  }
+
+  function playWinSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const winSound = new Audio('/assets/mp3/win.mp3');
+    winSound.volume = 0.7;
+    winSound.play().catch(err => console.warn("Win sound playback error:", err));
+  }
+
+  function playLossSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const lossSound = new Audio('/assets/mp3/loss.mp3');
+    lossSound.volume = 0.7;
+    lossSound.play().catch(err => console.warn("Loss sound playback error:", err));
+  }
+
+  playMusic();
+
+  const enableAudioOnInteraction = () => {
+    if (isMusicEnabled && bgMusic.paused && !isSolvedOrRevealed) {
+      playMusic();
+    }
+    document.removeEventListener('click', enableAudioOnInteraction);
+    document.removeEventListener('keydown', enableAudioOnInteraction);
+  };
+  document.addEventListener('click', enableAudioOnInteraction);
+  document.addEventListener('keydown', enableAudioOnInteraction);
+
+  if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+      isMusicEnabled = !isMusicEnabled;
+      if (isMusicEnabled) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+  }
+
   // Base Puzzles Collection (Solved & Initial Grid pairs)
   const puzzlesPool = [
     {
@@ -292,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isComplete && !hasError) {
       isSolvedOrRevealed = true;
       stopStopwatch();
+      playWinSound();
       if (winModalEl && typeof bootstrap !== 'undefined') {
         const modal = new bootstrap.Modal(winModalEl);
         modal.show();
@@ -304,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!sudokuBoard) return;
     isSolvedOrRevealed = true;
     stopStopwatch();
+    playLossSound();
 
     const cells = sudokuBoard.querySelectorAll('.sudoku-cell');
     cells.forEach(cell => {
@@ -319,6 +382,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. New Game / Reset Board
   function startNewGame() {
+    bgMusic.currentTime = 0;
+    if (isMusicEnabled) {
+      playMusic();
+    }
     initBoard();
   }
 
@@ -369,4 +436,5 @@ document.addEventListener('DOMContentLoaded', () => {
       revealFullSolution();
     });
   }
+
 });

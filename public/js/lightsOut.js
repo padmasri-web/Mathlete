@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameOverModalEl = document.getElementById('gameOverModal');
   const timerTextEl = document.getElementById('game-timer') || document.getElementById('timer-text');
   const timerToggleEl = document.getElementById('timer-toggle');
+  const musicToggleBtn = document.getElementById('music-toggle-btn') || document.getElementById('music-toggle');
+  
   const GRID_SIZE = 5;
   const GAME_DURATION = 120; // 2 minutes in seconds
 
@@ -14,7 +16,69 @@ document.addEventListener('DOMContentLoaded', () => {
   let timeLeft = GAME_DURATION;
   let isTimerEnabled = timerToggleEl ? timerToggleEl.checked : true;
 
-  // Toggle listener
+  // Audio Controllers (Background, Win, Loss)
+  let isMusicEnabled = true;
+  let bgMusic = new Audio('/assets/mp3/music.mp3');
+  bgMusic.loop = true;
+  bgMusic.volume = 0.5;
+
+  function playMusic() {
+    if (!isMusicEnabled) return;
+    bgMusic.play().then(() => {
+      if (musicToggleBtn) musicToggleBtn.classList.remove('muted');
+    }).catch(err => {
+      console.warn("Autoplay restriction waiting for user interaction:", err);
+    });
+  }
+
+  function pauseMusic() {
+    bgMusic.pause();
+    if (musicToggleBtn) musicToggleBtn.classList.add('muted');
+  }
+
+  function playWinSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const winSound = new Audio('/assets/mp3/win.mp3');
+    winSound.volume = 0.7;
+    winSound.play().catch(err => console.warn("Win sound audio play error:", err));
+  }
+
+  function playLossSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const lossSound = new Audio('/assets/mp3/loss.mp3');
+    lossSound.volume = 0.7;
+    lossSound.play().catch(err => console.warn("Loss sound audio play error:", err));
+  }
+
+  // Attempt autoplay immediately on load
+  playMusic();
+
+  // Handle browser autoplay policy (play on first click/interaction if blocked)
+  const enableAudioOnInteraction = () => {
+    if (isMusicEnabled && bgMusic.paused && !isGameOver) {
+      playMusic();
+    }
+    document.removeEventListener('click', enableAudioOnInteraction);
+    document.removeEventListener('keydown', enableAudioOnInteraction);
+  };
+  document.addEventListener('click', enableAudioOnInteraction);
+  document.addEventListener('keydown', enableAudioOnInteraction);
+
+  // Music Icon Button Click Listener
+  if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+      isMusicEnabled = !isMusicEnabled;
+      if (isMusicEnabled) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+  }
+
+  // Timer Toggle listener
   if (timerToggleEl) {
     timerToggleEl.addEventListener('change', () => {
       isTimerEnabled = timerToggleEl.checked;
@@ -72,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleGameOver() {
     stopTimer();
     isGameOver = true;
+    playLossSound();
     if (gameOverModalEl && typeof bootstrap !== 'undefined') {
       const modal = new bootstrap.Modal(gameOverModalEl);
       modal.show();
@@ -163,6 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     isGenerating = false;
 
+    // Resume background music if enabled
+    if (isMusicEnabled) {
+      playMusic();
+    }
+
     // Reset and start timer (if enabled)
     startTimer();
   }
@@ -174,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeLights.length === 0) {
       stopTimer();
       isGameOver = true;
+      playWinSound();
       if (winModalEl && typeof bootstrap !== 'undefined') {
         const modal = new bootstrap.Modal(winModalEl);
         modal.show();
@@ -187,17 +258,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Reset button event listener
   if (resetBtn) {
-    resetBtn.addEventListener('click', startFreshGame);
+    resetBtn.addEventListener('click', () => {
+      bgMusic.currentTime = 0;
+      startFreshGame();
+    });
   }
 
   // Modal play again / try again button handlers
   const modalResetBtn = document.getElementById('modal-reset-btn');
   if (modalResetBtn) {
-    modalResetBtn.addEventListener('click', startFreshGame);
+    modalResetBtn.addEventListener('click', () => {
+      bgMusic.currentTime = 0;
+      startFreshGame();
+    });
   }
 
   const gameOverResetBtn = document.getElementById('modal-gameover-reset-btn') || document.getElementById('game-over-reset-btn');
   if (gameOverResetBtn) {
-    gameOverResetBtn.addEventListener('click', startFreshGame);
+    gameOverResetBtn.addEventListener('click', () => {
+      bgMusic.currentTime = 0;
+      startFreshGame();
+    });
   }
 });

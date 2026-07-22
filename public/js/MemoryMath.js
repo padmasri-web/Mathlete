@@ -24,6 +24,68 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentCoins = 500;
   let currentXp = 0;
 
+  const musicToggleBtn = document.getElementById('music-toggle-btn');
+
+  // Audio Controllers (Background, Win, Loss)
+  let isMusicEnabled = true;
+  let bgMusic = new Audio('/assets/mp3/memory.mp3');
+  bgMusic.loop = true;
+  bgMusic.volume = 0.5;
+
+  function playMusic() {
+    if (!isMusicEnabled) return;
+    bgMusic.play().then(() => {
+      if (musicToggleBtn) musicToggleBtn.classList.remove('muted');
+    }).catch(err => {
+      console.warn("Autoplay policy waiting for user interaction:", err);
+    });
+  }
+
+  function pauseMusic() {
+    bgMusic.pause();
+    if (musicToggleBtn) musicToggleBtn.classList.add('muted');
+  }
+
+  function playWinSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const winSound = new Audio('/assets/mp3/win.mp3');
+    winSound.volume = 0.7;
+    winSound.play().catch(err => console.warn("Win sound playback error:", err));
+  }
+
+  function playLossSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const lossSound = new Audio('/assets/mp3/loss.mp3');
+    lossSound.volume = 0.7;
+    lossSound.play().catch(err => console.warn("Loss sound playback error:", err));
+  }
+
+  // Attempt autoplay immediately on load
+  playMusic();
+
+  const enableAudioOnInteraction = () => {
+    if (isMusicEnabled && bgMusic.paused) {
+      playMusic();
+    }
+    document.removeEventListener('click', enableAudioOnInteraction);
+    document.removeEventListener('keydown', enableAudioOnInteraction);
+  };
+  document.addEventListener('click', enableAudioOnInteraction);
+  document.addEventListener('keydown', enableAudioOnInteraction);
+
+  if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+      isMusicEnabled = !isMusicEnabled;
+      if (isMusicEnabled) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+  }
+
   // The 8 unique mathematical symbols
   const baseSymbols = ['∑', 'π', '∞', '√', '∫', 'Δ', 'Ω', 'µ'];
   
@@ -68,6 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timerInterval) {
       clearInterval(timerInterval);
       timerInterval = null;
+    }
+
+    bgMusic.currentTime = 0;
+    if (isMusicEnabled) {
+      playMusic();
     }
 
     // Show timer pill in navbar
@@ -194,6 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
       timerInterval = null;
     }
 
+    playWinSound();
+
     // Configure Modal content
     if (victoryIcon) victoryIcon.textContent = '🏆';
     if (victoryTitle) victoryTitle.textContent = 'Victory!';
@@ -223,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle Game Over (Time's Up)
   function handleGameOver() {
     isBoardLocked = true;
+    playLossSound();
 
     // Configure Modal content for loss state
     if (victoryIcon) victoryIcon.textContent = '⏱️';

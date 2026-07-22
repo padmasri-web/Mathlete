@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const scoreText = document.getElementById('score-text');
   const highScoreText = document.getElementById('high-score-text');
   const restartBtn = document.getElementById('restart-btn');
+  const musicToggleBtn = document.getElementById('music-toggle-btn');
 
   // Modal elements
   const gameOverModalEl = document.getElementById('gameOverModal');
@@ -29,9 +30,68 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameTimeout = null;
   const GAME_SPEED = 100; // tick every 100ms
 
-  // User Stats (to reward coins/XP)
+  // User Stats
   let currentCoins = 0;
   let currentXp = 0;
+
+  // Background Music Controller (/assets/mp3/snake.mp3)
+  let isMusicEnabled = true;
+  let bgMusic = new Audio('/assets/mp3/snake.mp3');
+  bgMusic.loop = true;
+  bgMusic.volume = 0.5;
+
+  function playMusic() {
+    if (!isMusicEnabled) return;
+    bgMusic.play().then(() => {
+      if (musicToggleBtn) musicToggleBtn.classList.remove('muted');
+    }).catch(err => {
+      console.warn("Autoplay policy waiting for user interaction:", err);
+    });
+  }
+
+  function pauseMusic() {
+    bgMusic.pause();
+    if (musicToggleBtn) musicToggleBtn.classList.add('muted');
+  }
+
+  function playLossSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const lossSound = new Audio('/assets/mp3/loss.mp3');
+    lossSound.volume = 0.7;
+    lossSound.play().catch(err => console.warn("Loss sound playback error:", err));
+  }
+
+  function playWinSound() {
+    if (!isMusicEnabled) return;
+    pauseMusic();
+    const winSound = new Audio('/assets/mp3/win.mp3');
+    winSound.volume = 0.7;
+    winSound.play().catch(err => console.warn("Win sound playback error:", err));
+  }
+
+  playMusic();
+
+  const enableAudioOnInteraction = () => {
+    if (isMusicEnabled && bgMusic.paused && !isGameOver) {
+      playMusic();
+    }
+    document.removeEventListener('click', enableAudioOnInteraction);
+    document.removeEventListener('keydown', enableAudioOnInteraction);
+  };
+  document.addEventListener('click', enableAudioOnInteraction);
+  document.addEventListener('keydown', enableAudioOnInteraction);
+
+  if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+      isMusicEnabled = !isMusicEnabled;
+      if (isMusicEnabled) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+  }
   
   // Fetch current user stats
   async function fetchUserStats() {
@@ -47,28 +107,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  highScoreText.textContent = highScore;
+  if (highScoreText) highScoreText.textContent = highScore;
 
   // Initialize/Reset Game
   function initGame() {
     snake = [
-      { x: 15, y: 10 },
-      { x: 14, y: 10 },
-      { x: 13, y: 10 }
+      { x: 10, y: 10 },
+      { x: 9, y: 10 },
+      { x: 8, y: 10 }
     ];
     dx = 1;
     dy = 0;
     score = 0;
-    scoreText.textContent = `Score: ${score}`;
     isGameOver = false;
     isChangingDirection = false;
+    isNewHighScore = false;
+    if (scoreText) scoreText.textContent = `Score: ${score}`;
+
     generateFood();
-    
     if (gameTimeout) clearTimeout(gameTimeout);
+    
+    bgMusic.currentTime = 0;
+    if (isMusicEnabled) {
+      playMusic();
+    }
+
+    draw(); // Immediate initial render
     gameLoop();
   }
 
-  // Generate food at random coordinates not on the snake
+  // Generate food at random grid position not occupied by snake
   function generateFood() {
     let foodX, foodY;
     let foodOnSnake = true;
@@ -88,94 +156,44 @@ document.addEventListener('DOMContentLoaded', () => {
     food = { x: foodX, y: foodY };
   }
 
-  // Handle Keyboard inputs
-  document.addEventListener('keydown', handleKeyDown);
-
-  function handleKeyDown(e) {
-    // Restart on space
-    if (e.code === 'Space' && isGameOver) {
-      e.preventDefault();
-      // Dismiss modal if open
-      if (gameOverModalEl && typeof bootstrap !== 'undefined') {
-        const modalInstance = bootstrap.Modal.getInstance(gameOverModalEl);
-        if (modalInstance) modalInstance.hide();
-      }
-      initGame();
-      return;
-    }
-
-    if (isChangingDirection) return;
-
-    const key = e.key.toLowerCase();
-    const goingUp = dy === -1;
-    const goingDown = dy === 1;
-    const goingRight = dx === 1;
-    const goingLeft = dx === -1;
-
-    // Up: ArrowUp / w
-    if ((key === 'arrowup' || key === 'w') && !goingDown) {
-      dx = 0;
-      dy = -1;
-      isChangingDirection = true;
-    }
-    // Down: ArrowDown / s
-    else if ((key === 'arrowdown' || key === 's') && !goingUp) {
-      dx = 0;
-      dy = 1;
-      isChangingDirection = true;
-    }
-    // Left: ArrowLeft / a
-    else if ((key === 'arrowleft' || key === 'a') && !goingRight) {
-      dx = -1;
-      dy = 0;
-      isChangingDirection = true;
-    }
-    // Right: ArrowRight / d
-    else if ((key === 'arrowright' || key === 'd') && !goingLeft) {
-      dx = 1;
-      dy = 0;
-      isChangingDirection = true;
-    }
-  }
-
-  // Game Loop
+  // Main Game Loop
   function gameLoop() {
     if (isGameOver) return;
 
-    isChangingDirection = false; // Reset direction change lock for this tick
-    
-    // Update state
-    moveSnake();
-    checkCollisions();
-    
-    if (isGameOver) {
-      handleGameOver();
-      return;
-    }
+    gameTimeout = setTimeout(() => {
+      isChangingDirection = false;
+      moveSnake();
+      checkCollisions();
 
-    // Draw
-    draw();
-
-    gameTimeout = setTimeout(gameLoop, GAME_SPEED);
+      if (isGameOver) {
+        handleGameOver();
+      } else {
+        draw();
+        gameLoop();
+      }
+    }, GAME_SPEED);
   }
 
-  // Move snake by calculating new head position and adding it to the front
+  let isNewHighScore = false;
+
+  // Advance snake head position and update tail
   function moveSnake() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
     snake.unshift(head);
 
-    // Check if food was eaten
+    // Check if snake ate food
     if (head.x === food.x && head.y === food.y) {
       score += 10;
-      scoreText.textContent = `Score: ${score}`;
+      if (scoreText) scoreText.textContent = `Score: ${score}`;
       if (score > highScore) {
         highScore = score;
-        highScoreText.textContent = highScore;
+        isNewHighScore = true;
+        if (highScoreText) highScoreText.textContent = highScore;
         localStorage.setItem('snakeHighScore', highScore);
       }
       generateFood();
     } else {
-      snake.pop(); // Remove tail
+      snake.pop(); // Remove tail segment if food wasn't eaten
     }
   }
 
@@ -183,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkCollisions() {
     const head = snake[0];
 
-    // Boundary check
+    // Boundary check for widescreen (30 x 20)
     if (head.x < 0 || head.x >= TILE_COUNT_X || head.y < 0 || head.y >= TILE_COUNT_Y) {
       isGameOver = true;
       return;
@@ -201,6 +219,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Game Over handling
   async function handleGameOver() {
     drawGameOver();
+
+    if (isNewHighScore) {
+      playWinSound();
+    } else {
+      playLossSound();
+    }
+
+    const modalTitleEl = document.getElementById('gameOverModalLabel');
+    if (modalTitleEl) {
+      if (isNewHighScore) {
+        modalTitleEl.innerHTML = '🎉 New High Score!';
+        modalTitleEl.className = 'modal-title fw-bold text-success fs-4';
+      } else {
+        modalTitleEl.innerHTML = '💀 Game Over';
+        modalTitleEl.className = 'modal-title fw-bold text-danger fs-4';
+      }
+    }
 
     // Reward player: 1 Coin + 1 XP per 10 points
     const coinReward = Math.floor(score / 10);
@@ -227,45 +262,42 @@ document.addEventListener('DOMContentLoaded', () => {
       currentCoins += coinReward;
       currentXp += xpReward;
 
-      // Update local storage/UI if elements exist
-      const coinsCount = document.getElementById('coins-count');
-      if (coinsCount) coinsCount.textContent = currentCoins;
-
       try {
         await fetch('/api/user/stats', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ coins: currentCoins, xp: currentXp })
         });
-      } catch (err) {
-        console.warn("Could not save stats to server:", err);
+      } catch (e) {
+        console.warn("Could not sync rewards to backend:", e);
       }
     }
   }
 
-  // Draw board
+  // Full Drawing Function (Grid, Food, Snake)
   function draw() {
-    // Clear canvas
+    // Clear Canvas
     ctx.fillStyle = '#111827';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Grid (Subtle lines)
+    // Draw Grid Lines
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.lineWidth = 1;
-    for (let i = 0; i <= TILE_COUNT_X; i++) {
+    for (let x = 0; x <= canvas.width; x += GRID_SIZE) {
       ctx.beginPath();
-      ctx.moveTo(i * GRID_SIZE, 0);
-      ctx.lineTo(i * GRID_SIZE, canvas.height);
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
       ctx.stroke();
     }
-    for (let j = 0; j <= TILE_COUNT_Y; j++) {
+    for (let y = 0; y <= canvas.height; y += GRID_SIZE) {
       ctx.beginPath();
-      ctx.moveTo(0, j * GRID_SIZE);
-      ctx.lineTo(canvas.width, j * GRID_SIZE);
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
       ctx.stroke();
     }
 
     // Draw Food (Shiny red glowing circle)
+    ctx.save();
     ctx.shadowBlur = 10;
     ctx.shadowColor = '#ef4444';
     ctx.fillStyle = '#ef4444';
@@ -275,80 +307,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const centerY = food.y * GRID_SIZE + GRID_SIZE / 2;
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.shadowBlur = 0; // Reset shadow
 
-    // Draw Food Leaf
+    // Food Leaf
+    ctx.shadowBlur = 0;
     ctx.fillStyle = '#22c55e';
     ctx.beginPath();
     ctx.ellipse(centerX + 2, centerY - radius + 1, 2, 4, Math.PI / 4, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.restore();
 
     // Draw Snake
-    snake.forEach((part, index) => {
+    snake.forEach((segment, index) => {
+      ctx.save();
       const isHead = index === 0;
-      
+
       if (isHead) {
-        ctx.fillStyle = '#4ade80'; // Bright green head
-        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#4ade80';
         ctx.shadowColor = '#4ade80';
-      } else {
-        // Fade color slightly to the tail
-        const alpha = 1 - (index / snake.length) * 0.5;
-        ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
+        ctx.shadowBlur = 8;
+        drawRoundedRect(ctx, segment.x * GRID_SIZE + 1, segment.y * GRID_SIZE + 1, GRID_SIZE - 2, GRID_SIZE - 2, 5);
+
+        // Eyes
         ctx.shadowBlur = 0;
-      }
-
-      // Draw rounded block
-      const x = part.x * GRID_SIZE;
-      const y = part.y * GRID_SIZE;
-      const size = GRID_SIZE - 2;
-      drawRoundedRect(ctx, x + 1, y + 1, size, size, 5);
-      
-      // Draw Head Details (Eyes)
-      if (isHead) {
-        ctx.shadowBlur = 0; // Reset for eyes
         ctx.fillStyle = '#ffffff';
-        
-        let eyeSize = 3;
-        let pupilSize = 1.5;
-        let eyeOffset = 4;
-        
-        // Eye positions based on movement direction
-        let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
+        const eyeOffset = 4;
+        let eye1X = segment.x * GRID_SIZE + eyeOffset;
+        let eye1Y = segment.y * GRID_SIZE + eyeOffset;
+        let eye2X = segment.x * GRID_SIZE + GRID_SIZE - eyeOffset - 3;
+        let eye2Y = segment.y * GRID_SIZE + eyeOffset;
 
-        if (dx === 1) { // Moving Right
-          leftEyeX = x + size - eyeOffset; leftEyeY = y + eyeOffset;
-          rightEyeX = x + size - eyeOffset; rightEyeY = y + size - eyeOffset;
-        } else if (dx === -1) { // Moving Left
-          leftEyeX = x + eyeOffset; leftEyeY = y + eyeOffset;
-          rightEyeX = x + eyeOffset; rightEyeY = y + size - eyeOffset;
-        } else if (dy === 1) { // Moving Down
-          leftEyeX = x + eyeOffset; leftEyeY = y + size - eyeOffset;
-          rightEyeX = x + size - eyeOffset; rightEyeY = y + size - eyeOffset;
-        } else if (dy === -1) { // Moving Up
-          leftEyeX = x + eyeOffset; leftEyeY = y + eyeOffset;
-          rightEyeX = x + size - eyeOffset; rightEyeY = y + eyeOffset;
+        if (dy === 1) { // moving down
+          eye1Y = eye2Y = segment.y * GRID_SIZE + GRID_SIZE - eyeOffset - 3;
+        } else if (dx === -1) { // moving left
+          eye1X = eye2X = segment.x * GRID_SIZE + eyeOffset;
+          eye2Y = segment.y * GRID_SIZE + GRID_SIZE - eyeOffset - 3;
+        } else if (dx === 1) { // moving right
+          eye1X = eye2X = segment.x * GRID_SIZE + GRID_SIZE - eyeOffset - 3;
+          eye2Y = segment.y * GRID_SIZE + GRID_SIZE - eyeOffset - 3;
         }
 
-        // Draw left eye
-        ctx.beginPath();
-        ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(leftEyeX + dx * 0.5, leftEyeY + dy * 0.5, pupilSize, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // Draw right eye
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(rightEyeX + dx * 0.5, rightEyeY + dy * 0.5, pupilSize, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx.fillRect(eye1X, eye1Y, 3, 3);
+        ctx.fillRect(eye2X, eye2Y, 3, 3);
+      } else {
+        const alpha = Math.max(0.4, 1 - (index / snake.length) * 0.5);
+        ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
+        drawRoundedRect(ctx, segment.x * GRID_SIZE + 1, segment.y * GRID_SIZE + 1, GRID_SIZE - 2, GRID_SIZE - 2, 4);
       }
+      ctx.restore();
     });
   }
 
@@ -374,9 +379,68 @@ document.addEventListener('DOMContentLoaded', () => {
     c.fill();
   }
 
+  // Keyboard Direction Controls
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
+
+    if (isGameOver) {
+      if (e.key === ' ') {
+        if (gameOverModalEl && typeof bootstrap !== 'undefined') {
+          const modalInstance = bootstrap.Modal.getInstance(gameOverModalEl);
+          if (modalInstance) modalInstance.hide();
+        }
+        bgMusic.currentTime = 0;
+        initGame();
+      }
+      return;
+    }
+
+    if (isChangingDirection) return;
+
+    const keyPressed = e.key;
+    const goingUp = dy === -1;
+    const goingDown = dy === 1;
+    const goingRight = dx === 1;
+    const goingLeft = dx === -1;
+
+    if ((keyPressed === 'ArrowLeft' || keyPressed.toLowerCase() === 'a') && !goingRight) {
+      dx = -1;
+      dy = 0;
+      isChangingDirection = true;
+    }
+    if ((keyPressed === 'ArrowUp' || keyPressed.toLowerCase() === 'w') && !goingDown) {
+      dx = 0;
+      dy = -1;
+      isChangingDirection = true;
+    }
+    if ((keyPressed === 'ArrowRight' || keyPressed.toLowerCase() === 'd') && !goingLeft) {
+      dx = 1;
+      dy = 0;
+      isChangingDirection = true;
+    }
+    if ((keyPressed === 'ArrowDown' || keyPressed.toLowerCase() === 's') && !goingUp) {
+      dx = 0;
+      dy = 1;
+      isChangingDirection = true;
+    }
+  });
+
   // Restart button clicks
-  if (restartBtn) restartBtn.addEventListener('click', initGame);
-  if (modalRestartBtn) modalRestartBtn.addEventListener('click', initGame);
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      bgMusic.currentTime = 0;
+      initGame();
+    });
+  }
+
+  if (modalRestartBtn) {
+    modalRestartBtn.addEventListener('click', () => {
+      bgMusic.currentTime = 0;
+      initGame();
+    });
+  }
 
   // Initialize
   fetchUserStats();

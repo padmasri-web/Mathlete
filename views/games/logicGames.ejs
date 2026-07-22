@@ -4,87 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matiks - Logic Challenge</title>
-  <!-- Bootstrap 5 CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/dashboard.css">
-  <link rel="stylesheet" href="/css/backgroundFX.css">
   <style>
     .game-wrapper {
-      position: relative;
-      z-index: 5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
-      padding: 18px 24px;
-      background: var(--card-bg, rgba(251, 252, 252, 0.4));
-      border: var(--card-border, 1px solid rgba(251, 252, 252, 0.6));
+      gap: 20px;
+      padding: 30px;
+      background: var(--card-bg);
+      border: var(--card-border);
       border-radius: 20px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: var(--glass-shadow);
-      max-width: 580px;
+      box-shadow: var(--card-shadow);
+      max-width: 500px;
       margin: 0 auto;
       text-align: center;
     }
     .logic-box {
-      background: rgba(32, 32, 48, 0.7);
-      border-radius: 14px;
-      padding: 18px 22px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       width: 100%;
       text-align: left;
+      margin: 15px 0;
       color: #fff;
     }
     .options-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
+      margin: 15px 0;
     }
     .option-btn {
       width: 100%;
-      padding: 10px 16px;
-      background: rgba(32, 32, 48, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
       color: #fff;
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
       text-align: left;
       cursor: pointer;
       transition: all 0.2s;
     }
     .option-btn:hover {
-      background: rgba(80, 209, 224, 0.15);
-      border-color: #50D1E0;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-hot-pink);
     }
     .option-btn.selected {
-      background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
-      border-color: #50D1E0;
-      font-weight: 800;
+      background: var(--accent-hot-pink);
+      border-color: var(--accent-hot-pink);
     }
     .game-actions {
       display: flex;
-      gap: 12px;
-      margin-top: 4px;
+      gap: 15px;
     }
     .game-btn {
-      padding: 8px 22px;
+      padding: 10px 20px;
       background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       color: #fff;
       font-family: var(--font-heading);
       font-weight: 800;
-      font-size: 14px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
     }
     .game-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(80, 209, 224, 0.3);
     }
   </style>
 </head>
@@ -93,19 +85,19 @@
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content" style="padding: 15px 30px;">
+    <main class="main-content">
       <%- include('../dashboard/navbar') %>
 
-      <div style="padding: 10px 24px;">
+      <div style="padding: 24px;">
         <div class="game-wrapper">
           <div class="game-header">
-            <h1 style="font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; color: var(--text-primary); font-size: 22px; margin: 0;">Logic Games</h1>
-            <p style="color: rgba(82, 81, 110, 0.75); font-size: 12px; margin-top: 2px;">Solve the logic riddle to earn premium XP rewards!</p>
+            <h1 style="font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; color: #fff;">Logic Games</h1>
+            <p style="color: var(--text-dim); margin-top: 5px;">Solve the logic riddle to earn premium XP rewards!</p>
           </div>
 
-          <div class="logic-box shadow-sm">
-            <h3 style="margin-bottom: 8px; color: #FFD23F; font-size: 16px; font-weight: 800;">💡 Riddle of the Day:</h3>
-            <p style="line-height: 1.6; margin: 0; font-size: 14px;">If a circle is one, a line is two, and a triangle is three, what is the value of a square?</p>
+          <div class="logic-box">
+            <h3 style="margin-bottom: 10px; color: #FFD23F;">Riddle of the Day:</h3>
+            <p style="line-height: 1.6;">If a circle is one, a line is two, and a triangle is three, what is the value of a square?</p>
           </div>
 
           <div class="options-list" id="riddle-options">
@@ -117,7 +109,7 @@
 
           <div class="game-actions">
             <button class="game-btn" onclick="submitAnswer()">Submit</button>
-            <button class="game-btn" style="background: rgba(82, 81, 110, 0.1); border: 1px solid rgba(82, 81, 110, 0.2); color: var(--text-primary);" onclick="window.location.href='/'">Back</button>
+            <button class="game-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="window.location.href='/'">Back</button>
           </div>
         </div>
       </div>
@@ -144,6 +136,5 @@
     }
   </script>
   <script src="/js/main.js"></script>
-  <script src="/js/backgroundFX.js"></script>
 </body>
 </html>
