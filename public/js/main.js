@@ -189,7 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
         actionElement = document.createElement('button');
         actionElement.className = 'quest-play-btn';
         actionElement.textContent = 'Play Now';
-        actionElement.addEventListener('click', () => completeQuest(quest, card));
+        actionElement.addEventListener('click', () => {
+          if (quest.title && quest.title.toLowerCase().includes('sudoku')) {
+            window.location.href = '/games/sudoku';
+          } else {
+            completeQuest(quest, card);
+          }
+        });
       }
 
       top.appendChild(title);

@@ -10,21 +10,26 @@
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/backgroundFX.css">
   <style>
+    .modal-backdrop.show {
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      background-color: rgba(15, 23, 42, 0.55) !important;
+    }
     .game-wrapper {
       position: relative;
       z-index: 5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
+      gap: 12px;
+      padding: 16px 24px;
       background: var(--card-bg, rgba(251, 252, 252, 0.4));
       border: var(--card-border, 1px solid rgba(251, 252, 252, 0.6));
       border-radius: 20px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--glass-shadow);
-      max-width: 440px;
+      max-width: 640px;
       margin: 0 auto;
       text-align: center;
     }
@@ -33,19 +38,19 @@
       font-weight: 800;
       text-transform: uppercase;
       color: var(--text-primary, #52516E);
-      font-size: 20px;
+      font-size: 22px;
       margin: 0;
     }
     .game-header p {
-      color: rgba(82, 81, 110, 0.7);
-      font-size: 11px;
+      color: rgba(82, 81, 110, 0.75);
+      font-size: 12px;
       margin-top: 2px;
       margin-bottom: 2px !important;
     }
     .score-badge {
       background: rgba(80, 209, 224, 0.12);
       color: #0ea5e9;
-      padding: 4px 14px;
+      padding: 5px 18px;
       border-radius: 50px;
       font-family: var(--font-heading);
       font-weight: 800;
@@ -56,21 +61,21 @@
     }
     #game-canvas {
       background: #111827; /* Tailwind Gray 900 */
-      border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.35);
       border: 2px solid rgba(255, 255, 255, 0.1);
       width: 100%;
-      max-width: 320px; /* Reduced from 400px to ensure it fits without scrolling */
-      aspect-ratio: 1 / 1;
+      max-width: 580px;
+      aspect-ratio: 3 / 2;
       display: block;
     }
     .game-actions {
       display: flex;
-      gap: 15px;
-      margin-top: 5px;
+      gap: 12px;
+      margin-top: 4px;
     }
     .game-btn {
-      padding: 8px 20px;
+      padding: 8px 22px;
       background: linear-gradient(135deg, var(--accent-royal-blue), #50D1E0);
       border: none;
       border-radius: 12px;
@@ -92,10 +97,10 @@
   <div class="dashboard-container">
     <%- include('../dashboard/leftbar') %>
 
-    <main class="main-content">
+    <main class="main-content" style="padding: 15px 30px;">
       <%- include('../dashboard/navbar') %>
 
-      <div style="padding: 10px 24px;">
+      <div style="padding: 8px 24px;">
         <div class="game-wrapper">
           <div class="game-header">
             <h1>Snake Game</h1>
@@ -103,19 +108,19 @@
           </div>
 
           <!-- Score Display -->
-          <div class="d-flex align-items-center justify-content-between gap-3 w-100 px-1" style="max-width: 320px;">
+          <div class="d-flex align-items-center justify-content-between gap-3 w-100 px-1" style="max-width: 580px;">
             <div class="score-badge shadow-sm" id="score-badge" title="Current Score">
               <span>🍎</span>
               <span id="score-text">Score: 0</span>
             </div>
             
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-primary);">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">
               High Score: <span id="high-score-text">0</span>
             </div>
           </div>
 
-          <!-- Canvas -->
-          <canvas id="game-canvas" width="400" height="400"></canvas>
+          <!-- Widescreen Canvas (600x400) -->
+          <canvas id="game-canvas" width="600" height="400"></canvas>
 
           <!-- Controls -->
           <div class="game-actions">
@@ -127,7 +132,38 @@
     </main>
   </div>
 
+  <!-- Bootstrap 5 Game Over Modal -->
+  <div class="modal fade" id="gameOverModal" tabindex="-1" aria-labelledby="gameOverModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 24px; background: #ffffff; border: none; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-danger fs-4" id="gameOverModalLabel">💀 Game Over</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <div style="font-size: 52px; margin-bottom: 10px;">🐍💥</div>
+          <h3 class="fw-bold text-dark mb-2">Better Luck Next Time!</h3>
+          <div class="d-flex justify-content-center gap-3 my-3">
+            <div class="px-3 py-2 rounded-3" style="background: rgba(244, 47, 118, 0.1); border: 1px solid rgba(244, 47, 118, 0.2);">
+              <div style="font-size: 11px; font-weight: 700; color: #F42F76;">FINAL SCORE</div>
+              <div class="fw-bold fs-4 text-dark" id="modal-final-score">0</div>
+            </div>
+            <div class="px-3 py-2 rounded-3" style="background: rgba(80, 209, 224, 0.1); border: 1px solid rgba(80, 209, 224, 0.2);">
+              <div style="font-size: 11px; font-weight: 700; color: #0ea5e9;">BEST SCORE</div>
+              <div class="fw-bold fs-4 text-dark" id="modal-high-score">0</div>
+            </div>
+          </div>
+          <p class="text-muted mb-0" id="modal-rewards-text">Earned <strong>+0 Coins</strong> and <strong>+0 XP</strong>.</p>
+        </div>
+        <div class="modal-footer border-0 pt-0 justify-content-center">
+          <button type="button" class="btn btn-danger px-4 py-2 fw-bold text-white rounded-pill shadow-sm" data-bs-dismiss="modal" id="modal-restart-btn">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/snakeGame.js"></script>
   <script src="/js/backgroundFX.js"></script>
