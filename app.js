@@ -30,7 +30,7 @@ const Friend = require('./models/Friend');
 const { initDailyChallengeCron } = require('./utils/cronJobs');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
 connectDB();
@@ -140,7 +140,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Express Session Middleware
 app.use(session({
-  secret: 'mathlete-super-secret-key-9779',
+  secret: process.env.SESSION_SECRET || 'mathlete-super-secret-key-9779',
   resave: false,
   saveUninitialized: false
 }));
@@ -299,5 +299,5 @@ app.get('/{*splat}', (req, res) => {
 
 // Start listening
 app.listen(PORT, () => {
-  console.log(`Matiks Server listening on http://localhost:${PORT}`);
+  console.log(`🚀 Matiks Server listening on port ${PORT}`);
 });
